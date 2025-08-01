@@ -1,0 +1,42 @@
+import express, { Application, Request, Response } from "express";
+
+// import morgan from 'morgan';
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import exressSession from 'express-session';
+import passport from "passport";
+import "./app/config/passport";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import notFound from "./app/middleware/notFound";
+import { router } from "./app/routes";
+// import helmet from 'helmet';
+// Middlewares
+// app.use(helmet());
+
+// app.use(morgan('dev'));
+const app: Application = express();
+app.use(exressSession({
+  secret: "your secret",
+  resave: false,
+  saveUninitialized: false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(express.json());
+app.use(cookieParser())
+app.use(cors({ origin: process.env.CLIENT_URL || "*", credentials: true }));
+
+app.use("/api/v1", router);
+
+// Sample Route
+app.get("/", (_req: Request, res: Response) => {
+  res.json({ message: "API Working with MongoDB 🚀" });
+});
+
+// Global Error Handler
+app.use(globalErrorHandler);
+// 404 Not Found
+app.use(notFound);
+
+// Export the app for use in server.ts
+export default app;
