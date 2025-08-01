@@ -58,7 +58,8 @@ const requestRide  = async (
 
 const acceptRide = async (
   reqId: string,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
+
 ) => {
   // 1. Ensure role is DRIVER
   if (decodedToken.role !== UserRole.DRIVER) {
@@ -122,7 +123,8 @@ ride.statusHistory.push({
 
 const changeRideStatus = async (
   reqId: string,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
+
 ) => {
    
     if (decodedToken.role !== "driver") {
@@ -152,21 +154,21 @@ const changeRideStatus = async (
   // 5. Ensure the ride belongs to the driver
   if (!ride.driverId || !ride.driverId.equals(driverUser._id)) {
     throw new AppError("This ride does not belong to you", 403);
-  }
-// 6. Validate next status transition
-  // const validStatus = [
-  //   status.ACCEPTED,
-  //   status.PICKED_UP,
-  //   status.IN_TRANSIT,
-  //   RideStatus.COMPLETED,
-  // ];
-  return ride
-
 };
 
+  // 6. Validate next status transition
+  // const validStatus = [
+  //   RideStatus.ACCEPTED,
+  //   RideStatus.PICKED_UP,
+  //   RideStatus.IN_TRANSIT,
+  //   RideStatus.COMPLETED,
+  // ];
 
+
+}
 export const RideService = {
     requestRide,
     acceptRide,
     changeRideStatus
     };
+  

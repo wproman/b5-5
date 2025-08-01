@@ -56,9 +56,7 @@ const acceptRide  = catchAsync(
 const changeRideStatus  = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, _next: NextFunction) => {
-    
-       
-        const verifiedToken = req.user
+            const verifiedToken = req.user
        
        
         const reqId = req.params.id;
