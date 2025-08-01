@@ -21,3 +21,4 @@ export interface ILocation {
   };
   rating?: number;
 }
+

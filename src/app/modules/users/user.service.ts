@@ -23,9 +23,6 @@ const updateUserService = async (
     throw new AppError("You are not authorized to update role", 403);
   }
 
-
-
-
   if (payload.isDeleted || payload.isVerified || payload.isActive) {
     throw new AppError("You are not authorized to update this field", 403);
   }

@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import { envVars } from "../config";
 import AppError from "../errorHelper/AppError";
 import { IsActive, IUser } from "../modules/users/user.interface";
 import { User } from "../modules/users/user.models";
@@ -8,18 +9,19 @@ const createUserToken = async (user: Partial<IUser>) => {
     const JwtPayload = {
     email: user.email,
     role: user.role,
-    id: user._id,
+    id: user.id,
   };
+
   const accessToken = JwtHelper.generateToken(
     JwtPayload,
-    process.env.JWT_SECRET as string,
-    process.env.JWT_EXPIRATION
+   envVars.JWT_ACCESS_SECRET as string,
+    envVars.JWT_ACCESS_EXPIRES
   );
 
   const refreshToken = JwtHelper.generateToken(
     JwtPayload,
-    process.env.JWT_REFRESH_SECRET as string,
-    process.env.JWT_REFRESH_EXPIRATION
+envVars.JWT_REFRESH_SECRET as string,
+    envVars.JWT_REFRESH_EXPIRES
   ); 
 
  return {
@@ -31,7 +33,7 @@ const createUserToken = async (user: Partial<IUser>) => {
 const creatNewAccessTokenWithRefreshToken = async (refreshToken: string) => {
   const verifiedRefreshToken = JwtHelper.verifyToken(
     refreshToken,
-    process.env.JWT_REFRESH_SECRET as string
+   envVars.JWT_REFRESH_SECRET as string
   ) as JwtPayload
 
 
@@ -54,7 +56,7 @@ const creatNewAccessTokenWithRefreshToken = async (refreshToken: string) => {
   }
 
   const payload = { email: isUserExist.email,    role: isUserExist.role,    id: isUserExist._id, };
-  const accessToken = JwtHelper.generateToken(    payload,    process.env.JWT_SECRET as string,    process.env.JWT_EXPIRATION  );
+  const accessToken = JwtHelper.generateToken(    payload,   envVars.JWT_ACCESS_SECRET,   envVars.JWT_ACCESS_EXPIRES  );
 
   
   return {

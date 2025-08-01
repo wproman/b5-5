@@ -2,31 +2,68 @@ import bcrypt from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelper/AppError";
 import { UserToken } from "../../utils/userToken";
-import { IAuthProvider, IUser } from "../users/user.interface";
+import { DriverModel } from "../driver/driver.model";
+import { IUser } from "../users/user.interface";
 import { User } from "../users/user.models";
+import { IRegisterRequest } from "./auth.interface";
 
 
-const createUserService = async (payload: Partial<IUser>): Promise<IUser> => {
-  const { email, password, ...rest } = payload;
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    throw new AppError("User already exists", 400);
+const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRequest> => {
+//   const { email, password, ...rest } = payload;
+//   const existingUser = await User.findOne({ email });
+//   if (existingUser) {
+//     throw new AppError("User already exists", 400);
+//   }
+//   const hashedPassword = bcrypt.hashSync(password as string, 10);
+
+//   const authProvider: IAuthProvider = {
+//     provider: "credentials",
+//     providerId: email as string,
+//   };
+
+//   const user = await User.create({
+//     email,
+//     password: hashedPassword,
+//     auths: [authProvider],
+//     ...rest,
+//   });
+//   return user;
+
+ const { role, ...userData } = payload;
+
+  // Common validation
+  if (!['rider', 'driver'].includes(role)) {
+    
+    throw new AppError("Invalid role", 400);
   }
-  const hashedPassword = bcrypt.hashSync(password as string, 10);
 
-  const authProvider: IAuthProvider = {
-    provider: "credentials",
-    providerId: email as string,
-  };
+  const hashedPassword = bcrypt.hashSync(userData.password as string, 10);
 
-  const user = await User.create({
-    email,
-    password: hashedPassword,
-    auths: [authProvider],
-    ...rest,
-  });
-  return user;
+  // Create user
+  const user = await User.create({ ...userData, role, password: hashedPassword });
+
+  // If driver, create driver profile
+  if (role === 'driver') {
+    if (!payload.licenseNumber || !payload.vehicleInfo) {
+      await User.deleteOne({ _id: user._id }); // Rollback
+    
+      throw new AppError("Missing driver information", 400);
+      
+    }
+    
+    await DriverModel.create({
+      userId: user._id,
+      licenseNumber: payload.licenseNumber,
+      vehicleInfo: payload.vehicleInfo,
+      approvalStatus: 'pending' // Requires admin approval
+    });
+  }
+
+ return user as IRegisterRequest;
+
 };
+
+
 
 const credentialslogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;

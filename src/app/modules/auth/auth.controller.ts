@@ -13,6 +13,7 @@ import { AuthService } from "./auth.service";
 const createUser = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const userData = req.body;
+   
 
     const newUser = await AuthService.createUserService(userData);
 

@@ -1,92 +1,91 @@
 /* eslint-disable no-console */
+import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 
 import { envVars } from "./app/config";
+import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
+
+let server: Server;
 
 
-// Server instance variable
-let server: ReturnType<typeof app.listen>;
+const startServer = async () => {
+    try {
+        await mongoose.connect(envVars.DB_URL)
 
-/**
- * Connect to MongoDB and start the server
- */
-const bootstrap = async (): Promise<void> => {
-  try {
-    // MongoDB Connection
-    await mongoose.connect(envVars.database_url as string);
-    console.log("✅ MongoDB connected successfully");
+        console.log("Connected to DB!!");
 
-    // Start Express server
-    server = app.listen(envVars.port, () => {
-      console.log(`🚀 Server running on http://localhost:${envVars.port}`);
+        server = app.listen(envVars.PORT, () => {
+            console.log(`Server is listening to port ${envVars.PORT}`);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-  
-   
-    });
+(async () => {
+    await startServer()
+    await seedSuperAdmin()
+})()
 
-    // Set mongoose debug mode based on environment
-    mongoose.set("debug", envVars.node_env === "development");
-  } catch (error) {
-    console.error("❌ Failed to initialize application:", error);
-    process.exit(1);
-  }
-};
-
-// Initialize the application
-bootstrap();
-
-/**
- * Graceful Shutdown & Error Handling
- */
-
-// Uncaught Exceptions (synchronous errors)
-process.on("uncaughtException", (error: Error) => {
-  console.error("💥 Uncaught Exception:", error);
-  process.exit(1);
-});
-
-// Unhandled Promise Rejections (asynchronous errors)
-process.on("unhandledRejection", (reason: unknown) => {
-  console.error(
-    "⏳ Unhandled Rejection at:",
-    reason instanceof Error ? reason.stack : reason
-  );
-
-  if (server) {
-    server.close(() => {
-      console.log("🔒 Server closed due to unhandled rejection");
-      process.exit(1);
-    });
-  } else {
-    process.exit(1);
-  }
-});
-
-// SIGTERM (e.g. Docker stop, Vercel shutdown)
 process.on("SIGTERM", () => {
-  console.log("🛑 SIGTERM received - Graceful shutdown initiated");
+    console.log("SIGTERM signal recieved... Server shutting down..");
 
-  if (server) {
-    server.close(() => {
-      console.log("🚪 HTTP server closed");
-      mongoose.connection.close(false).then(() => {
-        console.log("🔒 MongoDB connection closed");
-        process.exit(0);
-      });
-    });
-  }
-});
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
 
-// SIGINT (Ctrl+C)
+    process.exit(1)
+})
+
 process.on("SIGINT", () => {
-  console.log("🛑 SIGINT received - Shutting down");
+    console.log("SIGINT signal recieved... Server shutting down..");
 
-  if (server) {
-    server.close(() => {
-      mongoose.connection.close(false).then(() => {
-        process.exit(0);
-      });
-    });
-  }
-});
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
+})
+
+
+process.on("unhandledRejection", (err) => {
+    console.log("Unhandled Rejecttion detected... Server shutting down..", err);
+
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
+})
+
+process.on("uncaughtException", (err) => {
+    console.log("Uncaught Exception detected... Server shutting down..", err);
+
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
+})
+
+// Unhandler rejection error
+// Promise.reject(new Error("I forgot to catch this promise"))
+
+// Uncaught Exception Error
+// throw new Error("I forgot to handle this local erro")
+
+
+/**
+ * unhandled rejection error
+ * uncaught rejection error
+ * signal termination sigterm
+ */
