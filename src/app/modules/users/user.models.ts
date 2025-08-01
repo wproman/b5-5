@@ -1,21 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IAuthProvider, IUser, UserRole } from "./user.interface";
+import { IUser, UserRole } from "./user.interface";
 
-const authProviderSchema = new Schema<IAuthProvider>(
-  {
-    provider: {
-      type: String,
-      required: true,
-    },
-    providerId: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    _id: false,
-  }
-);
+
 const userSchema = new Schema<IUser>(
   {
     name: {
@@ -63,7 +49,7 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
-    auths: [authProviderSchema],
+   
   },
   {
     timestamps: true,
