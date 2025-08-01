@@ -71,7 +71,7 @@ const acceptRide = async (
   if (!driverUser) {
     throw new AppError("Driver user not found", 404);
   }
-   console.log(driverUser)
+
   // 3. Get the driver's additional info from DriverModel
   const driverProfile = await DriverModel.findOne({ userId: driverUser._id });
   if (!driverProfile) {
@@ -97,7 +97,7 @@ const acceptRide = async (
   if (!ride) {
     throw new AppError("Ride not found", 404);
   }
-  console.log(ride)
+ 
 
   // 7. Make sure the ride is still available for acceptance
   if (ride.status !== "requested") {
@@ -105,7 +105,7 @@ const acceptRide = async (
   }
 
   // 8. Accept the ride
-// ride.driverId = driverUser._id;
+ride.driverId = driverUser._id;
 ride.status = "accepted";
 ride.acceptedAt = new Date(); // ✅ Now works because acceptedAt is directly in schema
 
@@ -120,11 +120,53 @@ ride.statusHistory.push({
   return ride;
 };
 
+const changeRideStatus = async (
+  reqId: string,
+  decodedToken: JwtPayload
+) => {
+   
+    if (decodedToken.role !== "driver") {
+    throw new AppError("Only drivers can update ride status", 403);
+  }
 
+ 
+ 
+  // 2. Find the driver user
+  const driverUser = await User.findOne({ email: decodedToken.email });
+  if (!driverUser) {
+    throw new AppError("Driver user not found", 404);
+  }
+  
+   // 3. Ensure driver profile exists
+  const driverProfile = await DriverModel.findOne({ userId: driverUser._id });
+  if (!driverProfile || driverProfile.approvalStatus !== "approved" || !driverProfile.onlineStatus) {
+    throw new AppError("Driver not authorized or not online", 403);
+  }
+  
+    // 4. Find the ride
+  const ride = await Ride.findById(reqId);
+  if (!ride) {
+    throw new AppError("Ride not found", 404);
+  }
 
+  // 5. Ensure the ride belongs to the driver
+  if (!ride.driverId || !ride.driverId.equals(driverUser._id)) {
+    throw new AppError("This ride does not belong to you", 403);
+  }
+// 6. Validate next status transition
+  // const validStatus = [
+  //   status.ACCEPTED,
+  //   status.PICKED_UP,
+  //   status.IN_TRANSIT,
+  //   RideStatus.COMPLETED,
+  // ];
+  return ride
+
+};
 
 
 export const RideService = {
     requestRide,
-    acceptRide
+    acceptRide,
+    changeRideStatus
     };

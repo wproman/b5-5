@@ -12,6 +12,8 @@ const router = Router();
 
 router.post(  "/request",  checAuth(UserRole.RIDER), RideController.requestRide);
 router.patch(  "/:id/accept",  checAuth(UserRole.DRIVER), RideController.acceptRide);
+router.patch(  "/:id/status",  checAuth(UserRole.DRIVER), RideController.changeRideStatus);
+
 // router.patch(  "/cancel/:id", validateRequest(updateUserSchemaZod),  checAuth(...Object.values(UserRole)), UserController.updateUser);
 // router.get(  "/history", checAuth(UserRole.ADMIN, UserRole.DRIVER, UserRole.RIDER), UserController.getUserById);
 
