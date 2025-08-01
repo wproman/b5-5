@@ -25,6 +25,6 @@ export const globalErrorHandler = (
     success: false,
     message,
     err,
-    stack: envVars?.node_env === "development" ? err?.stack : null,
+    stack: envVars?.NODE_ENV === "development" ? err?.stack : null,
   });
 };

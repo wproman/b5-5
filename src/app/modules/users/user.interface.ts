@@ -18,7 +18,7 @@ export interface IAuthProvider {
   providerId: string;
 }
 export interface IUser {
-  _id?: Types.ObjectId;
+  id?: Types.ObjectId;
   name: string;
   email: string;
   password?: string;
@@ -28,12 +28,7 @@ export interface IUser {
   isDeleted?: boolean;
   isActive?: IsActive;
   isVerified?: boolean;
- driverInfo?: {
-    approved: boolean;
-    online: boolean;
-    vehicleNumber: string;
-    earnings: number;
-  };
+
   auths: IAuthProvider[];
   role: UserRole;
 

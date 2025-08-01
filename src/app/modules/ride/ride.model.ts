@@ -1,30 +1,68 @@
-import mongoose from "mongoose";
+import { model, Schema } from "mongoose";
+const rideSchema = new Schema(
+  {
+    riderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  driverId: { type: Schema.Types.ObjectId, ref: "User" },
 
-// Ride Schema
-const RideSchema = new mongoose.Schema({
-  riderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  pickupLocation: {
-    address: String,
-    coordinates: { type: [Number], required: true }
-  },
-  destinationLocation: {
-    address: String,
-    coordinates: { type: [Number], required: true }
-  },
-  status: {
-    type: String,
-    enum: ['requested', 'accepted', 'picked_up', 'in_transit', 'completed', 'cancelled'],
-    default: 'requested'
-  },
-  fare: { type: Number },
-  requestedAt: { type: Date, default: Date.now },
-  acceptedAt: Date,
-  pickedUpAt: Date,
-  completedAt: Date,
-  cancelledAt: Date,
-  cancellationReason: String,
-  paymentStatus: { type: String, enum: ['pending', 'paid', 'refunded'], default: 'pending' }
-});
+    pickupLocation: {
+      address: String,
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true,
+      },
+    },
+    destination: {
+      address: String,
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
 
-export const RideModel = mongoose.model('Ride', RideSchema); 
+    status: {
+      type: String,
+      enum: ["requested", "accepted", "picked_up", "in_transit", "completed", "cancelled"],
+      default: "requested",
+    },
+
+    requestedAt: Date,
+    acceptedAt: Date,
+    pickedUpAt: Date,
+    completedAt: Date,
+    cancelledAt: Date,
+    cancelledBy: {
+      type: String,
+      enum: ["rider", "driver", "system"],
+    },
+    cancellationReason: String,
+
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "refunded"],
+      default: "pending",
+    },
+
+    statusHistory: [
+      {
+        status: {
+          type: String,
+          enum: ["requested", "accepted", "picked_up", "in_transit", "completed", "cancelled"],
+        },
+        timestamp: Date,
+        changedBy: {
+          type: String,
+          enum: ["rider", "driver", "system"],
+        },
+      },
+    ],
+
+    riderRating: Number,
+    driverRating: Number,
+    feedback: String,
+  },
+  {
+    timestamps: true, // Mongoose auto-created: createdAt & updatedAt
+  }
+);
+
+export const Ride = model("Ride", rideSchema);

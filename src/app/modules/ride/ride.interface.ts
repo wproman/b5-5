@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Types } from "mongoose";
 
 interface ILocation {
   address: string;
@@ -22,8 +22,8 @@ export enum RideStatus {
 
 export interface IRide {
   _id: string;
- rider: Schema.Types.ObjectId;
-  driver?: Schema.Types.ObjectId;// Optional until accepted
+ riderId: Types.ObjectId;
+  driverId?: Types.ObjectId;// Optional until accepted
   pickupLocation: ILocation;
   destination: ILocation;
   status: RideStatus;
