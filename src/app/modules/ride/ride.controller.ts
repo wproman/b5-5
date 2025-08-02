@@ -58,12 +58,15 @@ const changeRideStatus  = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
             const verifiedToken = req.user
        
-       
+        const { status } = req.body;
+
+        
         const reqId = req.params.id;
         const users = await RideService.changeRideStatus(
           reqId,
           
-          verifiedToken as JwtPayload
+          verifiedToken as JwtPayload,
+          status,
         );
 
     sendResponse(res, {
@@ -75,11 +78,37 @@ const changeRideStatus  = catchAsync(
   }
 );
 
+const cancelRide  = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, _next: NextFunction) => {
+            const verifiedToken = req.user
+       
+        const { reason } = req.body;
+
+    
+        const rideId = req.params.id;
+        const ride = await RideService.cancelRide(
+          rideId,
+          
+          verifiedToken as JwtPayload,
+      
+          reason,
+        );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Ride cancelled successfully",
+      data: ride,
+    });
+  }
+);
 
 
 
 export const RideController = {
     requestRide ,
     acceptRide,
-changeRideStatus
+changeRideStatus,
+cancelRide
     };

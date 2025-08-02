@@ -26,7 +26,7 @@ export interface IRide {
   driverId?: Types.ObjectId;// Optional until accepted
   pickupLocation: ILocation;
   destination: ILocation;
-  status: RideStatus;
+  rideStatus: RideStatus;
   fare: number;
   distance: number; // in kilometers
   requestedAt: Date;

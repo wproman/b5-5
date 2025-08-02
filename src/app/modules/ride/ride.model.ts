@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { RideStatus } from "./ride.interface";
 const rideSchema = new Schema(
   {
     riderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -19,10 +20,10 @@ const rideSchema = new Schema(
       },
     },
 
-    status: {
+    rideStatus: {
       type: String,
-      enum: ["requested", "accepted", "picked_up", "in_transit", "completed", "cancelled"],
-      default: "requested",
+      enum: Object.values(RideStatus),
+      default: RideStatus.REQUESTED,
     },
 
     requestedAt: Date,
