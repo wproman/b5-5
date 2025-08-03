@@ -104,11 +104,57 @@ const cancelRide  = catchAsync(
   }
 );
 
+const getRidesByRiderId  = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, _next: NextFunction) => {
+            
+     const verifiedToken = req.user     
+       
+        const ride = await RideService.getRidesByRiderId(
+          verifiedToken as JwtPayload, 
+        );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Ride history fetched successfully",
+      data: ride,
+    });
+  }
+);
+
+const rateRide   = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, _next: NextFunction) => {
+    
+        const rideId = req.params.id;
+    const validateRequest = req.user;
+    const { rating, feedback } = req.body;
+
+    const result = await RideService.submitRating(rideId, validateRequest as JwtPayload, { rating, feedback });
+
+   
+
+ sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Rating submitted successfully",
+      data: result,
+    });
+
+  }
+);
+
+
+
+
 
 
 export const RideController = {
     requestRide ,
     acceptRide,
 changeRideStatus,
-cancelRide
+cancelRide,
+getRidesByRiderId,
+rateRide
     };

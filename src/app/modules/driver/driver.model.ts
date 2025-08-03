@@ -30,8 +30,13 @@ const DriverSchema = new Schema({
       },
     },
   },
+  earnings: { type: Number, default: 0 },
   rating: { type: Number, default: 0 },
-});
+},
+  {
+    timestamps: true,
+  }
+);
 
 DriverSchema.index({ currentLocation: "2dsphere" });
 

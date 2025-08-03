@@ -56,10 +56,16 @@ const rideSchema = new Schema(
         },
       },
     ],
+    fare: { type: Number, default: 0 },
 
-    riderRating: Number,
-    driverRating: Number,
-    feedback: String,
+    driverRating: {
+  rating: { type: Number, min: 1, max: 5 },
+  feedback: { type: String },
+},
+riderRating: {
+  rating: { type: Number, min: 1, max: 5 },
+  feedback: { type: String },
+},
   },
   {
     timestamps: true, // Mongoose auto-created: createdAt & updatedAt

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelper/AppError";
+import { DriverModel } from "../driver/driver.model";
 import { IUser, UserRole } from "./user.interface";
 import { User } from "./user.models";
 
@@ -45,8 +46,55 @@ const getAllUsersService = async (): Promise<IUser[]> => {
   }
   return users;
 };
+
+
+
+const toggleUserBlockStatus = async (
+  userId: string,
+  admin: JwtPayload,
+  shouldBlock: boolean
+) => {
+  // Verify admin privileges
+  if (admin.role !== UserRole.ADMIN) {
+    throw new AppError('Unauthorized: Admin access required', 403);
+  }
+
+  // Prevent self-blocking
+  if (admin.userId === userId) {
+    throw new AppError('Admins cannot block themselves', 400);
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  // Prevent blocking other admins
+  if (user.role === UserRole.ADMIN) {
+    throw new AppError('Cannot block other admin users', 403);
+  }
+
+  // Update block status
+  user.isBlocked = shouldBlock;
+  await user.save();
+
+  // If blocking a driver, set offline
+  if (shouldBlock && user.role === UserRole.DRIVER) {
+    await DriverModel.findOneAndUpdate(
+      { userId },
+      { onlineStatus: false },
+      { new: true }
+    );
+  }
+
+  return user;
+};
+ 
+
+
 export const UserService = {
 
   getAllUsersService,
   updateUserService,
+  toggleUserBlockStatus
 };
