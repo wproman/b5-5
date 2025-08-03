@@ -16,6 +16,7 @@ const userSchema = new Schema<IUser>(
       enum: ["active", "inactive", "blocked", "deleted"],
       default: "active",
     },
+    isBlocked: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
   },
   {
@@ -26,12 +27,5 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-// Optional: If you want to populate driver data from User
-// userSchema.virtual("driver", {
-//   ref: "Driver",
-//   localField: "_id",
-//   foreignField: "userId",
-//   justOne: true,
-// });
 
 export const User = model<IUser>("User", userSchema);

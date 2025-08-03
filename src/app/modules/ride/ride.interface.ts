@@ -19,7 +19,10 @@ export enum RideStatus {
   COMPLETED = "completed",
   CANCELLED = "cancelled",
 }
-
+export interface IRatingInput {
+  rating: number;
+  feedback?: string;
+}
 export interface IRide {
   _id: string;
  riderId: Types.ObjectId;
@@ -36,9 +39,9 @@ export interface IRide {
   cancelledAt?: Date;
   cancelledBy?: 'rider' | 'driver' | 'system';
   statusHistory: IStatusHistoryItem[];
-  riderRating?: number;
-  driverRating?: number;
-  feedback?: string;
+  riderRating?: IRatingInput;
+  driverRating?: IRatingInput;
+
    paymentStatus: 'pending' | 'paid' | 'refunded';
 }
 

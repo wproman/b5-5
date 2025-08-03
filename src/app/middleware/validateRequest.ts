@@ -12,3 +12,15 @@ export const validateRequest = (zodSchema: AnyZodObject) => {
     }
   };
 };
+
+export const validateRequestParams = (zodSchema: AnyZodObject) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      req.params = await zodSchema.parseAsync(req.params);
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};

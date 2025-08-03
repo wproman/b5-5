@@ -6,7 +6,7 @@ import { IsActive, UserRole } from "../modules/users/user.interface";
 import { User } from "../modules/users/user.models";
 import { JwtHelper } from "../utils/jwt";
 
-const checAuth =  (...authRoles: UserRole[]) => {
+const checkAuth =  (...authRoles: UserRole[]) => {
   return  async (req: Request, res: Response, next: NextFunction) => {
     const accessToken = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
     if (!accessToken) {
@@ -54,4 +54,4 @@ const checAuth =  (...authRoles: UserRole[]) => {
 
 
 
-export default checAuth;
+export default checkAuth;

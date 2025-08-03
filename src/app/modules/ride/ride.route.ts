@@ -14,9 +14,10 @@ router.post(  "/request",  checAuth(UserRole.RIDER), RideController.requestRide)
 router.patch(  "/:id/accept",  checAuth(UserRole.DRIVER), RideController.acceptRide);
 router.patch(  "/:id/status",  checAuth(UserRole.DRIVER), RideController.changeRideStatus);
 router.patch(  "/:id/cancel",  checAuth(UserRole.RIDER, UserRole.DRIVER), RideController.cancelRide);
+router.get('/me', checAuth(UserRole.RIDER), RideController.getRidesByRiderId);
+router.post('/:id/rate', checAuth(UserRole.RIDER), RideController.rateRide);
 
 
-// router.patch(  "/cancel/:id", validateRequest(updateUserSchemaZod),  checAuth(...Object.values(UserRole)), UserController.updateUser);
-// router.get(  "/history", checAuth(UserRole.ADMIN, UserRole.DRIVER, UserRole.RIDER), UserController.getUserById);
+
 
 export const RiderRoutes = router;

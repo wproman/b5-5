@@ -17,6 +17,7 @@ const userSchemaZod = z.object({
   phone: z.string().optional(),
   picture: z.string().optional(),
   address: z.string().optional(),
+  
 });
 
 // update user schema
@@ -29,4 +30,14 @@ const updateUserSchemaZod = z.object({
   address: z.string().optional(),
 });
 
-export { updateUserSchemaZod, userSchemaZod };
+ const userIdParamSchema = z.object({
+  
+    id: z.string().regex(/^[0-9a-fA-F]{24}$/, {
+      message: 'Invalid user ID format'
+    })
+  
+});
+
+
+export { updateUserSchemaZod, userIdParamSchema, userSchemaZod };
+

@@ -3,7 +3,7 @@ import AppError from "../../errorHelper/AppError";
 import { DriverModel } from "../driver/driver.model";
 import { UserRole } from "../users/user.interface";
 import { User } from "../users/user.models";
-import { IRide, RideStatus } from "./ride.interface";
+import { IRatingInput, IRide, RideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
 
 
@@ -173,12 +173,22 @@ const changeRideStatus = async (
   // Optional: update timestamps
   if (Ridestatus === RideStatus.PICKED_UP) ride.pickedUpAt = new Date();
   if (Ridestatus === RideStatus.IN_TRANSIT) ride.rideStatus = RideStatus.IN_TRANSIT;
-  if (Ridestatus === RideStatus.COMPLETED) ride.completedAt = new Date();
+if (Ridestatus === RideStatus.COMPLETED) {
+  await DriverModel.findOneAndUpdate(
+    { userId: ride.driverId },
+    { $inc: { 'driverInfo.earnings': ride.fare } }
+  );
+
+  ride.completedAt = new Date();
+  ride.paymentStatus = 'paid'; // ✅ Add this line to mark payment
+}
   // if (Ridestatus === RideStatus.CANCELLED) {
   //   ride.cancelledAt = new Date();
   //   ride.cancelledBy = "driver"; // or "system" based on your logic
   // }
 
+
+ 
   // Update status history
   ride.statusHistory.push({
     rideStatus: Ridestatus,
@@ -249,10 +259,77 @@ if (!allowedCancellationStates[decodedToken.role].includes(ride.rideStatus)) {
   return ride;
 
 }
+
+
+const getRidesByRiderId = async (decodedToken: JwtPayload) => {
+  const riderId = decodedToken.id;
+
+  const rides = await Ride.find({ riderId }).sort({ createdAt: -1 });
+
+  return rides.map(ride => ({
+    rideId: ride._id,
+    pickupLocation: ride.pickupLocation,
+    destination: ride.destination,
+    rideStatus: ride.rideStatus,
+    fare: ride.fare,
+    paymentStatus: ride.paymentStatus,
+    requestedAt: ride.requestedAt,
+    acceptedAt: ride.acceptedAt,
+    pickedUpAt: ride.pickedUpAt,
+    completedAt: ride.completedAt,
+    statusHistory: ride.statusHistory,
+  }));
+};
+
+
+const submitRating = async (
+  rideId: string,
+    // user: IUser,
+  decodedToken: JwtPayload,
+    ratingInput: IRatingInput
+)  => {
+
+ const { rating, feedback } = ratingInput;
+
+   // Validate rating
+    if (!rating || rating < 1 || rating > 5) {
+      throw new AppError("Rating must be between 1 and 5", 400);
+         }
+          // Find the ride
+    const ride = await Ride.findById(rideId);
+    if (!ride) {
+      throw new AppError("Ride not found", 404);
+    }
+       // Ensure ride is completed
+    if (ride.rideStatus !== "completed") {
+      throw new AppError("You can only rate a completed ride", 400);
+    }
+
+    const isRider = decodedToken.role === "rider" && ride.riderId.toString() === decodedToken.id;
+    const isDriver = decodedToken.role === "driver" && ride.driverId?.toString() === decodedToken.id;
+
+  if (!isRider && !isDriver) {
+      throw new AppError("You are not authorized to rate this ride", 403);
+    }
+
+  // Update ride document
+    if (isRider) {
+      ride.driverRating = { rating, feedback };
+    } else if (isDriver) {
+      ride.riderRating = { rating, feedback };
+    }
+  
+    await ride.save();
+
+    return ride;
+
+}
 export const RideService = {
     requestRide,
     acceptRide,
     changeRideStatus,
-    cancelRide
+    cancelRide,
+    getRidesByRiderId,
+    submitRating
     };
   

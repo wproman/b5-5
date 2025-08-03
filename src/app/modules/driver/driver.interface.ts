@@ -5,6 +5,8 @@ export interface ILocation {
   address: string;
   coordinates: [number, number]; // [longitude, latitude]
 }
+
+
 // Extended Driver Interface
  export interface IDriver extends IUser {
   licenseNumber: string;
@@ -19,6 +21,7 @@ export interface ILocation {
     type: 'Point';
     coordinates: [number, number];
   };
+   earnings: number
   rating?: number;
 }
 
