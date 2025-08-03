@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { envVars } from "../../config";
 import AppError from "../../errorHelper/AppError";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { CookieHelper } from "../../utils/setCookie";
-import { UserToken } from "../../utils/userToken";
 import { AuthService } from "./auth.service";
 
 // Create User Controller
@@ -99,24 +97,6 @@ const resetPassword = catchAsync( async (req: Request, res: Response, _next: Nex
   }
 );
 
-const googleCallbackController = catchAsync(async(req: Request, res: Response, _next: NextFunction)=>{
-  let redirectTo = req.query.state ?  req.query.state as string :""
-
-  if(redirectTo.startsWith("/")){
-    redirectTo = redirectTo.slice(1)
-  }
-
-  const user = req.user;
-
-  if(!user) {
-    throw new AppError( "User not found", 402)
-  }
-  const tokenInfo =  await UserToken.createUserToken (user)
-
-  CookieHelper.setAuthCookie (res, tokenInfo)
-  res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
-
-})
 
 export const AuthController = {
   createUser,
@@ -124,5 +104,5 @@ export const AuthController = {
   getNewAccessToken,
   logout,
   resetPassword,
-  googleCallbackController
+
 };

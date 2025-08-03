@@ -15,7 +15,6 @@ router.patch(  "/block/:id", validateRequestParams(userIdParamSchema), checkAuth
 router.patch( '/unblock/:id', checkAuth(UserRole.ADMIN), UserController.blockUnblockUser
 );
 
-// router.patch('/unblock/:id', checkAuth(UserRole.ADMIN), UserController.blockUnblockUser);
 router.patch(  "/:id", validateRequest(updateUserSchemaZod),  checkAuth(...Object.values(UserRole)), UserController.updateUser);
 
 export const UserRoutes = router;
