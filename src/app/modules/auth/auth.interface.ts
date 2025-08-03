@@ -11,7 +11,7 @@ export interface IRegisterRequest {
   password: string;
   phone: string;
   role: 'rider' | 'driver';
-  // Driver-specific fields (optional)
+
   licenseNumber?: string;
   vehicleInfo?: {
     model: string;
@@ -20,7 +20,3 @@ export interface IRegisterRequest {
   };
 }
 
-// export interface IAuthResponse {
-//   user: Omit<IUser, 'password'>;
-//   token: string;
-// }

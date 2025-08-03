@@ -76,7 +76,6 @@ const getEarningsHistory  = async (
   
 };
 
-
   
 const updateDriverStatus  = async (
   decodedToken: JwtPayload,

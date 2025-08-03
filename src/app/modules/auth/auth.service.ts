@@ -9,25 +9,6 @@ import { IRegisterRequest } from "./auth.interface";
 
 
 const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRequest> => {
-//   const { email, password, ...rest } = payload;
-//   const existingUser = await User.findOne({ email });
-//   if (existingUser) {
-//     throw new AppError("User already exists", 400);
-//   }
-//   const hashedPassword = bcrypt.hashSync(password as string, 10);
-
-//   const authProvider: IAuthProvider = {
-//     provider: "credentials",
-//     providerId: email as string,
-//   };
-
-//   const user = await User.create({
-//     email,
-//     password: hashedPassword,
-//     auths: [authProvider],
-//     ...rest,
-//   });
-//   return user;
 
  const { role, ...userData } = payload;
 
@@ -42,7 +23,7 @@ const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRe
   // Create user
   const user = await User.create({ ...userData, role, password: hashedPassword });
 
-  // If driver, create driver profile
+
   if (role === 'driver') {
     if (!payload.licenseNumber || !payload.vehicleInfo) {
       await User.deleteOne({ _id: user._id }); // Rollback
@@ -55,7 +36,7 @@ const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRe
       userId: user._id,
       licenseNumber: payload.licenseNumber,
       vehicleInfo: payload.vehicleInfo,
-      approvalStatus: 'pending' // Requires admin approval
+      approvalStatus: 'pending' 
     });
   }
 
@@ -63,13 +44,9 @@ const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRe
 
 };
 
-
-
 const credentialslogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
 
-  // Here you would typically validate the credentials against a database
-  // For demonstration purposes, we will assume the credentials are valid
   if (!email || !password) {
     throw new AppError("Email and password are required", 400);
   }
@@ -98,18 +75,14 @@ const credentialslogin = async (payload: Partial<IUser>) => {
   };
 };
 
-
 const getNewAccessToken = async (refreshToken: string) => {
- 
   const newAccessToken = (await UserToken.creatNewAccessTokenWithRefreshToken(
     refreshToken
   )).accessToken;
   return {
     accessToken: newAccessToken,
   };
- 
 };
-
 const resetPassword = async (
   oldPassword: string,
   newPassword: string,
@@ -133,8 +106,6 @@ const resetPassword = async (
 
   return true;
 };
-
-
 export const AuthService = {
   createUserService,
   credentialslogin,
