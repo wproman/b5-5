@@ -31,13 +31,13 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 - MongoDB
 - Git
 
-### Installation
+## ⚙️ Installation
 
 1. **Clone the repository**
-  
+   ```bash
    git clone https://github.com/yourusername/ride-booking-api.git
- #  cd ride-booking-api
-# Install dependencies
+   cd ride-booking-api
+Install dependencies
 
 npm install
 Configure environment
@@ -101,7 +101,7 @@ Testing: Jest, Supertest
 Documentation: Swagger UI
 
 🗂 Project Structure
-text
+
 src/
 ├── config/         # Environment/config files
 ├── interfaces/     # TypeScript interfaces
