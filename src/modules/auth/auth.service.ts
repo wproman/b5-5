@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
+
 import AppError from "../../errorHelper/AppError";
 import { UserToken } from "../../utils/userToken";
 import { DriverModel } from "../driver/driver.model";

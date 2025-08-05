@@ -3,8 +3,8 @@ import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 
-import { envVars } from "./app/config";
-import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
+import { envVars } from "./config";
+import { seedSuperAdmin } from "./utils/seedSuperAdmin";
 
 let server: Server;
 

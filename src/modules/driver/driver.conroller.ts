@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
+
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { DriverService } from "./driver.service";

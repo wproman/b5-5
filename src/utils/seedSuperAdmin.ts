@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+
 import { envVars } from "../config";
 import { IAuthProvider, IUser, UserRole } from "../modules/users/user.interface";
 import { User } from "../modules/users/user.models";

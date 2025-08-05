@@ -1,5 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
+
 import AppError from "../../errorHelper/AppError";
+import { calculateFare } from "../../utils/fareCalculator";
 import { DriverModel } from "../driver/driver.model";
 import { UserRole } from "../users/user.interface";
 import { User } from "../users/user.models";
@@ -37,18 +39,26 @@ const requestRide  = async (
     const userId = isRiderExist._id;
  
     // Optional: check if rider has an ongoing ride
-    const ongoingRide = await Ride.findOne({ rider: userId, status: { $nin: ["completed", "cancelled"] } });
+    const ongoingRide = await Ride.findOne({ rider: userId, status: { $nin: [RideStatus.COMPLETED, RideStatus.CANCELLED] } });
     if (ongoingRide) {
       
-        throw new AppError("ou already have an ongoing ride", 400);
+        throw new AppError("you already have an ongoing ride", 400);
     }
+
+ // 5. (Mock) distance/duration 
+  const distanceKm = 7; 
+  const durationMin = 18; 
+  const fare = calculateFare(distanceKm, durationMin);
+
 
    const newRide = await Ride.create({
   riderId: userId,
   pickupLocation,
   destination,
-  status: "requested",
+    fare,
+  status: RideStatus.REQUESTED,
   requestedAt: new Date(),
+  paymentStatus: 'pending',
 });
 
     return newRide;
@@ -155,6 +165,11 @@ const changeRideStatus = async (
     throw new AppError("This ride does not belong to you", 403);
 };
 
+// 6. Prevent duplicate completion
+  if (ride.rideStatus === RideStatus.COMPLETED) {
+    throw new AppError("This ride is already completed", 400);
+  }
+
   // 6. Validate next status transition
   const validStatus = [
     RideStatus.ACCEPTED,
@@ -174,20 +189,22 @@ const changeRideStatus = async (
   if (Ridestatus === RideStatus.PICKED_UP) ride.pickedUpAt = new Date();
   if (Ridestatus === RideStatus.IN_TRANSIT) ride.rideStatus = RideStatus.IN_TRANSIT;
 if (Ridestatus === RideStatus.COMPLETED) {
-  await DriverModel.findOneAndUpdate(
-    { userId: ride.driverId },
-    { $inc: { 'driverInfo.earnings': ride.fare } }
-  );
+  // Ensure fare is set
+    if (!ride.fare || ride.fare === 0) {
+      throw new AppError("Fare not calculated for this ride", 400);
+    }
+      // Update driver earnings atomically
+    await DriverModel.findOneAndUpdate(
+      { userId: ride.driverId },
+      {
+        $inc: { "driverInfo.earnings": ride.fare },
+        $set: { "driverInfo.currentRide": null },
+      }
+    );
 
   ride.completedAt = new Date();
   ride.paymentStatus = 'paid'; // ✅ Add this line to mark payment
 }
-  // if (Ridestatus === RideStatus.CANCELLED) {
-  //   ride.cancelledAt = new Date();
-  //   ride.cancelledBy = "driver"; // or "system" based on your logic
-  // }
-
-
  
   // Update status history
   ride.statusHistory.push({
@@ -197,6 +214,7 @@ if (Ridestatus === RideStatus.COMPLETED) {
   });
 
   await ride.save();
+  return ride;
 
 }
 

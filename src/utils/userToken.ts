@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+
 import { envVars } from "../config";
 import AppError from "../errorHelper/AppError";
 import { IsActive, IUser } from "../modules/users/user.interface";

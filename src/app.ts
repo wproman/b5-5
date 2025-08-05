@@ -4,10 +4,11 @@ import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import exressSession from 'express-session';
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import notFound from "./middleware/notFound";
+import { router } from "./routes";
 
-import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
-import notFound from "./app/middleware/notFound";
-import { router } from "./app/routes";
+
 // import helmet from 'helmet';
 // Middlewares
 // app.use(helmet());

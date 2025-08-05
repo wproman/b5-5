@@ -37,11 +37,7 @@ const rideSchema = new Schema(
     },
     cancellationReason: String,
 
-    paymentStatus: {
-      type: String,
-      enum: ["pending", "paid", "refunded"],
-      default: "pending",
-    },
+  
 
     statusHistory: [
       {
@@ -57,7 +53,11 @@ const rideSchema = new Schema(
       },
     ],
     fare: { type: Number, default: 0 },
-
+  paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "refunded"],
+      default: "pending",
+    },
     driverRating: {
   rating: { type: Number, min: 1, max: 5 },
   feedback: { type: String },
