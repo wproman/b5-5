@@ -15,7 +15,7 @@ export interface ILocation {
     plate: string;
     color?: string;
   };
-  approvalStatus: 'pending' | 'approved' | 'rejected';
+  approvalStatus: 'pending' | 'approved' | 'suspended';
   onlineStatus: boolean;
   currentLocation: {
     type: 'Point';

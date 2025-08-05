@@ -1,9 +1,9 @@
 {
-  "name": "phfull",
+  "name": "ride-sharing-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ride Sharing Application Backend",
   "license": "ISC",
-  "author": "",
+  "author": "Roman Ahmed",
   "type": "commonjs",
 
   "main": "dist/server.js",
