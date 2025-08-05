@@ -74,8 +74,10 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 5.## 🔗 API Endpoints
     
   1.Register new user
-    POST	api/v1/auth/register	
-    Request:
+
+ POST	api/v1/auth/register	
+
+  Request:
     
   ```bash 
    {
