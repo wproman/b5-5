@@ -80,6 +80,27 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
   Request:
     
   ```bash 
+  {"name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "phone": "+8801234567890",
+  "picture": "https://example.com/profile.jpg",
+  "address": "123 Main Street, Dhaka, Bangladesh",
+  "isDeleted": false,
+  "isActive": "active",
+  "isVerified": true,
+  "auths": [
+    {
+      "provider": "google",
+      "providerId": "google-uid-12345"
+    }
+  ],
+  "role": "rider"
+}
+
+  Request:
+    
+  ```bash 
    {
   "name": "John Doe",
   "email": "john.doe@example.com",
@@ -98,7 +119,6 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
   ],
   "role": "rider"
 }
-
 
    POST	/auth/login	Login and get JWT
     -GET	/auth/me	Get current user
