@@ -70,9 +70,10 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
        npm run build
        npm start
 
-```bash
-  ##  🔗 API Endpoints
-  **🔐 Authentication**
+
+5.## 🔗 API Endpoints
+    ```bash
+   **🔐 Authentication**
     Method	Endpoint	Description
     -POST	/auth/register	Register new user
     -POST	/auth/login	Login and get JWT
