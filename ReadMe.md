@@ -76,7 +76,8 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
   1.Register new user
     POST	api/v1/auth/register	
     Request:
-    ```bash 
+    
+  ```bash 
    {
   "name": "John Doe",
   "email": "john.doe@example.com",
