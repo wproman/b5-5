@@ -8,6 +8,7 @@ import { UserRoutes } from "../modules/users/user.route";
 export const router = Router();
 
 const moduleRoutes = [
+
   {
     path: "/user",
     route: UserRoutes,

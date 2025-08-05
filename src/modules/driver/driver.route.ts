@@ -11,7 +11,7 @@ const router = Router();
 
 
 
-router.patch(  "/status",  checkAuth(UserRole.DRIVER), DriverController.changeOnlineStatus);
+router.patch(  "/availability",  checkAuth(UserRole.DRIVER), DriverController.changeOnlineStatus);
 
 router.get('/earnings', checkAuth(UserRole.DRIVER), DriverController.getEarningsHistory);
 router.patch('/approved/:id', checkAuth(UserRole.ADMIN), DriverController.approveOrSuspendDriver);

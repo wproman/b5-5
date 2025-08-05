@@ -5,7 +5,7 @@ import { calculateFare } from "../../utils/fareCalculator";
 import { DriverModel } from "../driver/driver.model";
 import { UserRole } from "../users/user.interface";
 import { User } from "../users/user.models";
-import { IRatingInput, IRide, RideStatus } from "./ride.interface";
+import { IRatingInput, IRide, IRideQuery, RideStatus } from "./ride.interface";
 import { Ride } from "./ride.model";
 
 
@@ -299,6 +299,42 @@ const getRidesByRiderId = async (decodedToken: JwtPayload) => {
   }));
 };
 
+const adminToSeeAllRides = async (query: IRideQuery) => {
+
+const {
+    page = 1,
+    limit = 2,
+    sortBy = 'createdAt',
+    sortOrder = 'desc',
+    status,
+  } = query;
+
+  const filter: Record<string, unknown> = {};
+  if (status) filter.status = status;
+
+  const sortOptions: Record<string, 1 | -1> = {
+    [sortBy]: sortOrder === 'asc' ? 1 : -1,
+  };
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const rides = await Ride.find(filter)
+    .populate('riderId driverId')
+    .sort(sortOptions)
+    .skip(skip)
+    .limit(Number(limit));
+
+  const total = await Ride.countDocuments(filter);
+
+  return {
+    meta: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+    },
+    data: rides,
+  };
+};
 
 const submitRating = async (
   rideId: string,
@@ -348,6 +384,7 @@ export const RideService = {
     changeRideStatus,
     cancelRide,
     getRidesByRiderId,
-    submitRating
+    submitRating,
+    adminToSeeAllRides
     };
   

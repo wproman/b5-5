@@ -45,3 +45,10 @@ export interface IRide {
    paymentStatus: 'pending' | 'paid' | 'refunded';
 }
 
+export interface IRideQuery {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  status?: string;
+}
