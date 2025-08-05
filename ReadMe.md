@@ -79,9 +79,9 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
   Request:
     
-    ```bash 
+    
       {"name": "John Doe",
-      "email": "john.doe@example.com",
+      "email": "john1.doe@example.com",
       "password": "securePassword123",
       "phone": "+8801234567890",
       "picture": "https://example.com/profile.jpg",
@@ -100,33 +100,85 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 
 
-  Request:
+ Response
     
-  ```bash 
-   {
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "securePassword123",
-  "phone": "+8801234567890",
-  "picture": "https://example.com/profile.jpg",
-  "address": "123 Main Street, Dhaka, Bangladesh",
-  "isDeleted": false,
-  "isActive": "active",
-  "isVerified": true,
-  "auths": [
-    {
-      "provider": "google",
-      "providerId": "google-uid-12345"
+   
+      {
+    "success": true,
+    "message": "User created successfully",
+    "data": {
+        "name": "John Doe",
+        "email": "john1.doe@example.com",
+        "password": "$2b$10$io9WXF9AkR/gezxRfdlaoOawNVcLMsbRG1edv.N2AsTJAogEPs846",
+        "role": "rider",
+        "phone": "+8801234567890",
+        "picture": "https://example.com/profile.jpg",
+        "address": "123 Main Street, Dhaka, Bangladesh",
+        "isDeleted": false,
+        "isActive": "active",
+        "isBlocked": false,
+        "isVerified": false,
+        "_id": "6891a9fde03816ba5786476d",
+        "createdAt": "2025-08-05T06:51:41.548Z",
+        "updatedAt": "2025-08-05T06:51:41.548Z",
+        "id": "6891a9fde03816ba5786476d"
     }
-  ],
-  "role": "rider"
-}
+      }   
 
-   POST	/auth/login	Login and get JWT
-    -GET	/auth/me	Get current user
+   POST	/api/v1/auth/login
+
+   Requset
+
+         {
+        "email": "john1.doe@example.com",
+          "password": "securePassword123"
+           }
+
+   Requset
+
+
+{
+    "success": true,
+    "message": "User logged in successfully",
+    "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4xLmRvZUBleGFtcGxlLmNvbSIsInJvbGUiOiJyaWRlciIsImlkIjoiNjg5MWE5ZmRlMDM4MTZiYTU3ODY0NzZkIiwiaWF0IjoxNzU0Mzc2ODE4LCJleHAiOjE3NTQ0NjMyMTh9.UEBIZXWftN7de30hfbJvHzrkLffWPcJdOeAMQ8Wfnvk",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4xLmRvZUBleGFtcGxlLmNvbSIsInJvbGUiOiJyaWRlciIsImlkIjoiNjg5MWE5ZmRlMDM4MTZiYTU3ODY0NzZkIiwiaWF0IjoxNzU0Mzc2ODE4LCJleHAiOjE3NTQ5ODE2MTh9.w_Xno_iMBKvHmzbBGh29XwNe9cEr-afJhhTCCPmvyuM",
+        "user": {
+            "_id": "6891a9fde03816ba5786476d",
+            "name": "John Doe",
+            "email": "john1.doe@example.com",
+            "role": "rider",
+            "phone": "+8801234567890",
+            "picture": "https://example.com/profile.jpg",
+            "address": "123 Main Street, Dhaka, Bangladesh",
+            "isDeleted": false,
+            "isActive": "active",
+            "isBlocked": false,
+            "isVerified": false,
+            "createdAt": "2025-08-05T06:51:41.548Z",
+            "updatedAt": "2025-08-05T06:51:41.548Z",
+            "id": "6891a9fde03816ba5786476d"
+        }
+    }
+
+    
   **🧍 Rider Endpoints**
-Method	Endpoint	Description
-POST	/rides/request	Request new ride
+
+  POST	api/v1/rides/request	
+
+
+Request
+        {
+          "pickupLocation": {
+            "lat": 23.8103,
+            "lng": 90.4125
+          },
+          "destination": {
+            "lat": 23.7806,
+            "lng": 90.4190
+          }
+        }
+
 PATCH	/rides/:id/cancel	Cancel a ride
 GET	/rides/me	Get ride history
 POST	/rides/:id/rate	Rate completed ride
