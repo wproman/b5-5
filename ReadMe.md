@@ -40,14 +40,16 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
    ```bash
    git clone https://github.com/yourusername/ride-booking-api.git
    cd ride-booking-api
+
+
 2. Install dependencies
 
-```bash
+   ```bash
    npm install
+   
 
-```bash
 3. Configure environment
-
+   ```bash
 Create .env file:
 
 PORT=5000
