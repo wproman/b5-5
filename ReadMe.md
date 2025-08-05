@@ -1,4 +1,4 @@
-markdown
+
 # 🚖 Ride Booking API
 
 A secure, scalable, and role-based backend API for a ride booking system (like Uber or Pathao) built using Express.js, Mongoose, TypeScript, and JWT.
