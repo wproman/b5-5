@@ -3,7 +3,7 @@ markdown
 
 A secure, scalable, and role-based backend API for a ride booking system (like Uber or Pathao) built using Express.js, Mongoose, TypeScript, and JWT.
 
-![API Architecture](https://i.imgur.com/Jq6Qv0E.png) *(example architecture diagram)*
+
 
 ## 📦 Features
 
@@ -72,12 +72,12 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 
 ##  🔗 API Endpoints
-🔐 Authentication
+- ** 🔐 Authentication
 Method	Endpoint	Description
-POST	/auth/register	Register new user
-POST	/auth/login	Login and get JWT
-GET	/auth/me	Get current user
-🧍 Rider Endpoints
+-POST	/auth/register	Register new user
+-POST	/auth/login	Login and get JWT
+-GET	/auth/me	Get current user
+- ** 🧍 Rider Endpoints
 Method	Endpoint	Description
 POST	/rides/request	Request new ride
 PATCH	/rides/:id/cancel	Cancel a ride
