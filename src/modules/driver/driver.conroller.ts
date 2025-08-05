@@ -16,7 +16,7 @@ const changeOnlineStatus  = catchAsync(
        
         const payload = req.body;
    
-        const rides = await DriverService.changeOnlineStatus(
+        const availability = await DriverService.changeOnlineStatus(
    
           payload,
           verifiedToken as JwtPayload
@@ -25,8 +25,8 @@ const changeOnlineStatus  = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "Users retrieved successfully",
-      data: rides,
+      message: "Online status changed successfully",
+      data: availability,
     });
   }
 );

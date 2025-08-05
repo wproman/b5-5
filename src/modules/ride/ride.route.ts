@@ -15,6 +15,8 @@ router.patch(  "/:id/accept",  checAuth(UserRole.DRIVER), RideController.acceptR
 router.patch(  "/:id/status",  checAuth(UserRole.DRIVER), RideController.changeRideStatus);
 router.patch(  "/:id/cancel",  checAuth(UserRole.RIDER, UserRole.DRIVER), RideController.cancelRide);
 router.get('/me', checAuth(UserRole.RIDER), RideController.getRidesByRiderId);
+router.get('/', checAuth(UserRole.ADMIN), RideController.adminToSeeAllRides);
+
 router.post('/:id/rate', checAuth(UserRole.RIDER), RideController.rateRide);
 
 

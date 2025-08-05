@@ -24,7 +24,7 @@ const requestRide  = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "Users retrieved successfully",
+      message: "Users requested successfully",
       data: rides,
     });
   }
@@ -39,7 +39,7 @@ const acceptRide  = catchAsync(
        
        
         const reqId = req.params.id;
-        const users = await RideService.acceptRide(
+        const result = await RideService.acceptRide(
           reqId,
           
           verifiedToken as JwtPayload
@@ -48,8 +48,8 @@ const acceptRide  = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "Users retrieved successfully",
-      data: users,
+      message: "Diver accept request successfully",
+      data: result,
     });
   }
 );
@@ -73,7 +73,7 @@ const changeRideStatus  = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "Users retrieved successfully",
+      message: `Ride status changed to ${status} successfully`,
       data: users,
     });
   }
@@ -124,6 +124,26 @@ const getRidesByRiderId  = catchAsync(
   }
 );
 
+const adminToSeeAllRides  = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, _next: NextFunction) => {
+            
+        
+     const query = req.query;
+
+    const result = await RideService.adminToSeeAllRides(query);
+      
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "All rides fetched successfully",
+      meta: result.meta,
+      data: result.data,
+    });
+  }
+);
+
 const rateRide   = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, _next: NextFunction) => {
@@ -157,5 +177,6 @@ export const RideController = {
 changeRideStatus,
 cancelRide,
 getRidesByRiderId,
-rateRide
+rateRide,
+adminToSeeAllRides
     };

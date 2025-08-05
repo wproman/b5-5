@@ -141,8 +141,8 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
     "success": true,
     "message": "User logged in successfully",
     "data": {
-        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4xLmRvZUBleGFtcGxlLmNvbSIsInJvbGUiOiJyaWRlciIsImlkIjoiNjg5MWE5ZmRlMDM4MTZiYTU3ODY0NzZkIiwiaWF0IjoxNzU0Mzc2ODE4LCJleHAiOjE3NTQ0NjMyMTh9.UEBIZXWftN7de30hfbJvHzrkLffWPcJdOeAMQ8Wfnvk",
-        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG4xLmRvZUBleGFtcGxlLmNvbSIsInJvbGUiOiJyaWRlciIsImlkIjoiNjg5MWE5ZmRlMDM4MTZiYTU3ODY0NzZkIiwiaWF0IjoxNzU0Mzc2ODE4LCJleHAiOjE3NTQ5ODE2MTh9.w_Xno_iMBKvHmzbBGh29XwNe9cEr-afJhhTCCPmvyuM",
+        "accessToken": ----,
+        "refreshToken": -----,
         "user": {
             "_id": "6891a9fde03816ba5786476d",
             "name": "John Doe",
@@ -281,7 +281,56 @@ GET	api/v1/rides/me	Get ride history
 
 
 POST	/rides/:id/rate	Rate completed ride
+ Reqest 
 
+      {
+      "rating": 5,
+      "feedback": "Excellent trip!"
+       }
+
+  Response
+
+      {
+        "success": true,
+        "message": "Rating submitted successfully",
+        "data": {
+            "pickupLocation": {
+                "coordinates": []
+            },
+            "destination": {
+                "coordinates": []
+            },
+            "driverRating": {
+                "rating": 5,
+                "feedback": "Excellent trip!"
+            },
+            "_id": "6891ad1be03816ba5786478e",
+            "riderId": "6891a9fde03816ba5786476d",
+            "rideStatus": "completed",
+            "requestedAt": "2025-08-05T07:04:59.320Z",
+            "fare": 261,
+            "paymentStatus": "paid",
+            "statusHistory": [
+                {
+                    "status": "accepted",
+                    "timestamp": "2025-08-05T07:07:47.594Z",
+                    "changedBy": "driver",
+                    "_id": "6891adc3e03816ba578647aa"
+                },
+                {
+                    "timestamp": "2025-08-05T07:11:06.969Z",
+                    "changedBy": "driver",
+                    "_id": "6891ae8ae03816ba578647b2"
+                }
+            ],
+            "createdAt": "2025-08-05T07:04:59.322Z",
+            "updatedAt": "2025-08-05T09:11:10.568Z",
+            "__v": 2,
+            "acceptedAt": "2025-08-05T07:07:47.594Z",
+            "driverId": "688db8b44c75790eb47823cc",
+            "completedAt": "2025-08-05T07:11:06.969Z"
+        }
+    }
    
 🚗 Driver Endpoints
 
@@ -405,7 +454,7 @@ Response
         }
     ]
 
-PATCH	/drivers/availability	Set online/offline status
+PATCH	/driver/availability	Set online/offline status
 
 Request 
 
@@ -455,7 +504,7 @@ Response
 
 🛡 Admin Endpoints
 
-GET	api/vi/admin/users	List all users
+GET	api/vi/user	List all users
 
         {
     "success": true,
@@ -528,10 +577,120 @@ GET	api/vi/admin/users	List all users
         }
     ]
     }
-GET	api/v1/admin/rides	View all rides
+GET	api/v1/rides	View all rides
 
+    {
+    "success": true,
+    "message": "Ride history fetched successfully",
+    "data": [
+        {
+            "pickupLocation": {
+                "coordinates": []
+            },
+            "destination": {
+                "coordinates": []
+            },
+            "_id": "6891ad1be03816ba5786478e",
+            "riderId": {
+                "_id": "6891a9fde03816ba5786476d",
+                "name": "John Doe",
+                "email": "john1.doe@example.com",
+                "password": "$2b$10$io9WXF9AkR/gezxRfdlaoOawNVcLMsbRG1edv.N2AsTJAogEPs846",
+                "role": "rider",
+                "phone": "+8801234567890",
+                "picture": "https://example.com/profile.jpg",
+                "address": "123 Main Street, Dhaka, Bangladesh",
+                "isDeleted": false,
+                "isActive": "active",
+                "isBlocked": false,
+                "isVerified": false,
+                "createdAt": "2025-08-05T06:51:41.548Z",
+                "updatedAt": "2025-08-05T06:51:41.548Z",
+                "id": "6891a9fde03816ba5786476d"
+            },
+            "rideStatus": "completed",
+            "requestedAt": "2025-08-05T07:04:59.320Z",
+            "fare": 261,
+            "paymentStatus": "paid",
+            "statusHistory": [
+                {
+                    "status": "accepted",
+                    "timestamp": "2025-08-05T07:07:47.594Z",
+                    "changedBy": "driver",
+                    "_id": "6891adc3e03816ba578647aa"
+                },
+                {
+                    "timestamp": "2025-08-05T07:11:06.969Z",
+                    "changedBy": "driver",
+                    "_id": "6891ae8ae03816ba578647b2"
+                }
+            ],
+            "createdAt": "2025-08-05T07:04:59.322Z",
+            "updatedAt": "2025-08-05T07:11:06.970Z",
+            "__v": 2,
+            "acceptedAt": "2025-08-05T07:07:47.594Z",
+            "driverId": {
+                "_id": "688db8b44c75790eb47823cc",
+                "name": "John Driver",
+                "email": "john2.driver@example.com",
+                "password": "$2b$10$roLX3wwddQh0hBB4poVFwuhooanGlKysHil6vma.gCfdgnzk0aMky",
+                "role": "driver",
+                "phone": "+8801234567890",
+                "picture": "https://example.com/profile.jpg",
+                "address": "123 Main Street, Dhaka",
+                "isDeleted": false,
+                "isActive": "active",
+                "isVerified": false,
+                "createdAt": "2025-08-02T07:05:24.445Z",
+                "updatedAt": "2025-08-03T02:15:47.895Z",
+                "isBlocked": false,
+                "id": "688db8b44c75790eb47823cc"
+            },
+            "completedAt": "2025-08-05T07:11:06.969Z"
+        },
+        {
+            "pickupLocation": {
+                "coordinates": []
+            },
+            "destination": {
+                "coordinates": []
+            },
+            "_id": "6891aceee03816ba57864787",
+            "riderId": {
+                "_id": "6891a9fde03816ba5786476d",
+                "name": "John Doe",
+                "email": "john1.doe@example.com",
+                "password": "$2b$10$io9WXF9AkR/gezxRfdlaoOawNVcLMsbRG1edv.N2AsTJAogEPs846",
+                "role": "rider",
+                "phone": "+8801234567890",
+                "picture": "https://example.com/profile.jpg",
+                "address": "123 Main Street, Dhaka, Bangladesh",
+                "isDeleted": false,
+                "isActive": "active",
+                "isBlocked": false,
+                "isVerified": false,
+                "createdAt": "2025-08-05T06:51:41.548Z",
+                "updatedAt": "2025-08-05T06:51:41.548Z",
+                "id": "6891a9fde03816ba5786476d"
+            },
+            "rideStatus": "requested",
+            "requestedAt": "2025-08-05T07:04:14.169Z",
+            "fare": 261,
+            "paymentStatus": "pending",
+            "statusHistory": [],
+            "createdAt": "2025-08-05T07:04:14.171Z",
+            "updatedAt": "2025-08-05T07:04:14.171Z",
+            "__v": 0
+        }
+    ],
+    "meta": {
+        "page": 1,
+        "limit": 2,
+        "total": 13
+    }
+        }
 
-PATCH	/drivers/approve/:id	Approve/suspend driver
+PATCH	/driver/approve/:id	Approve/suspend driver
    
    Request
 
@@ -568,7 +727,7 @@ Response
         "updatedAt": "2025-08-05T07:06:43.918Z"
     }
     }
-PATCH	/users/block/:id	Block/unblock user
+PATCH	/user/block/:id	Block/unblock user
 
         {
     "success": true,
@@ -591,7 +750,7 @@ PATCH	/users/block/:id	Block/unblock user
         "id": "688db9a38405c606e3abb6af"
     }
     }
-PATCH	/users/unblock/:id
+PATCH	/user/unblock/:id
 
       {
     "success": true,
