@@ -36,6 +36,7 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/ride-booking-api.git
    cd ride-booking-api
@@ -44,11 +45,11 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 ```bash
    npm install
 
-3. **Configure environment**
+```bash
+3. Configure environment
 
 Create .env file:
 
-env
 PORT=5000
 DB_URL=mongodb://localhost:27017/ride-booking
 NODE_ENV=development
@@ -57,9 +58,10 @@ JWT_ACCESS_EXPIRES=1d
 JWT_REFRESH_SECRET=yourSecretKey
 JWT_REFRESH_EXPIRES=7d
 BCRYPT_SALT_ROUNDS=10
-Run the application
 
-bash
+4. Run the application
+
+```bash
 # Development
 npm run dev
 
