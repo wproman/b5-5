@@ -137,7 +137,7 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
    Requset
 
 
-{
+          {
     "success": true,
     "message": "User logged in successfully",
     "data": {
@@ -168,6 +168,7 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 
 Request
+
         {
           "pickupLocation": {
             "lat": 23.8103,
@@ -179,21 +180,441 @@ Request
           }
         }
 
-PATCH	/rides/:id/cancel	Cancel a ride
-GET	/rides/me	Get ride history
+
+ Response 
+
+      {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": {
+        "riderId": "6891a9fde03816ba5786476d",
+        "pickupLocation": {
+            "coordinates": []
+        },
+        "destination": {
+            "coordinates": []
+        },
+        "rideStatus": "requested",
+        "requestedAt": "2025-08-05T07:00:42.108Z",
+        "fare": 261,
+        "paymentStatus": "pending",
+        "_id": "6891ac1ae03816ba57864773",
+        "statusHistory": [],
+        "createdAt": "2025-08-05T07:00:42.117Z",
+        "updatedAt": "2025-08-05T07:00:42.117Z",
+        "__v": 0
+    }
+
+
+PATCH	api/v1/rides/:id/cancel	Cancel a ride
+
+  Request
+
+          {
+      "reason": "Optional cancellation reason"  
+          }
+
+Response
+
+        {
+        "success": true,
+        "message": "Ride cancelled successfully",
+        "data": {
+            "pickupLocation": {
+                "coordinates": []
+            },
+            "destination": {
+                "coordinates": []
+            },
+            "_id": "6891ac1ae03816ba57864773",
+            "riderId": "6891a9fde03816ba5786476d",
+            "rideStatus": "cancelled",
+            "requestedAt": "2025-08-05T07:00:42.108Z",
+            "fare": 261,
+            "paymentStatus": "pending",
+            "statusHistory": [
+                {
+                    "status": "cancelled",
+                    "timestamp": "2025-08-05T07:02:30.885Z",
+                    "changedBy": "rider",
+                    "_id": "6891ac86e03816ba5786477f"
+                }
+            ],
+            "createdAt": "2025-08-05T07:00:42.117Z",
+            "updatedAt": "2025-08-05T07:02:30.890Z",
+            "__v": 1,
+            "cancelledAt": "2025-08-05T07:02:30.885Z",
+            "cancelledBy": "rider",
+            "cancellationReason": "Optional cancellation reason"
+
+
+GET	api/v1/rides/me	Get ride history
+
+  Response
+
+      {
+    "success": true,
+    "message": "Ride history fetched successfully",
+    "data": [
+        {
+            "rideId": "6891ac1ae03816ba57864773",
+            "pickupLocation": {
+                "coordinates": []
+            },
+            "destination": {
+                "coordinates": []
+            },
+            "rideStatus": "cancelled",
+            "fare": 261,
+            "paymentStatus": "pending",
+            "requestedAt": "2025-08-05T07:00:42.108Z",
+            "statusHistory": [
+                {
+                    "status": "cancelled",
+                    "timestamp": "2025-08-05T07:02:30.885Z",
+                    "changedBy": "rider",
+                    "_id": "6891ac86e03816ba5786477f"
+                }
+            ]
+        }
+    ]
+
+
 POST	/rides/:id/rate	Rate completed ride
+
+   
 🚗 Driver Endpoints
-Method	Endpoint	Description
-PATCH	/rides/:id/accept	Accept ride request
+
+
+PATCH	apiv1/rides/:id/accept	Accept ride request
+
+   
+Response
+
+      {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": {
+        "pickupLocation": {
+            "coordinates": []
+        },
+        "destination": {
+            "coordinates": []
+        },
+        "_id": "6891ad1be03816ba5786478e",
+        "riderId": "6891a9fde03816ba5786476d",
+        "rideStatus": "accepted",
+        "requestedAt": "2025-08-05T07:04:59.320Z",
+        "fare": 261,
+        "paymentStatus": "pending",
+        "statusHistory": [
+            {
+                "status": "accepted",
+                "timestamp": "2025-08-05T07:07:47.594Z",
+                "changedBy": "driver",
+                "_id": "6891adc3e03816ba578647aa"
+            }
+        ],
+        "createdAt": "2025-08-05T07:04:59.322Z",
+        "updatedAt": "2025-08-05T07:07:47.597Z",
+        "__v": 1,
+        "driverId": "688db8b44c75790eb47823cc",
+        "acceptedAt": "2025-08-05T07:07:47.594Z"
+    }
+}
+
 PATCH	/rides/:id/status	Update ride status
-GET	/drivers/earnings	View earnings history
+
+Request
+
+    {
+      "status":  "completed"
+    } 
+    // {
+    //   "status": "picked_up"
+    // }
+
+    // {
+    //   "status":  "in_transit"
+    // }
+
+Response
+
+      {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": {
+        "pickupLocation": {
+            "coordinates": []
+        },
+        "destination": {
+            "coordinates": []
+        },
+        "_id": "6891ad1be03816ba5786478e",
+        "riderId": "6891a9fde03816ba5786476d",
+        "rideStatus": "completed",
+        "requestedAt": "2025-08-05T07:04:59.320Z",
+        "fare": 261,
+        "paymentStatus": "paid",
+        "statusHistory": [
+            {
+                "status": "accepted",
+                "timestamp": "2025-08-05T07:07:47.594Z",
+                "changedBy": "driver",
+                "_id": "6891adc3e03816ba578647aa"
+            },
+            {
+                "timestamp": "2025-08-05T07:11:06.969Z",
+                "changedBy": "driver",
+                "_id": "6891ae8ae03816ba578647b2"
+            }
+        ],
+        "createdAt": "2025-08-05T07:04:59.322Z",
+        "updatedAt": "2025-08-05T07:11:06.970Z",
+        "__v": 2,
+        "acceptedAt": "2025-08-05T07:07:47.594Z",
+        "driverId": "688db8b44c75790eb47823cc",
+        "completedAt": "2025-08-05T07:11:06.969Z"
+    }
+      }
+
+GET	api/v1/drivers/earnings	View earnings history
+
+
+Response 
+
+      {
+    "success": true,
+    "message": "Earnings history fetched successfully",
+    "data": [
+        {
+            "amount": 100,
+            "date": "2025-08-02T07:23:29.316Z"
+        },
+        {
+            "amount": 0,
+            "date": "2025-08-02T15:06:32.595Z"
+        },
+        {
+            "amount": 261,
+            "date": "2025-08-03T17:31:33.784Z"
+        },
+        {
+            "amount": 261,
+            "date": "2025-08-05T07:04:59.322Z"
+        }
+    ]
+
 PATCH	/drivers/availability	Set online/offline status
+
+Request 
+
+      // {
+        //   "onlineStatus": true,
+        //   "currentLocation": {
+        //     "coordinates": [-73.987654, 40.748817],
+        //     "address": "Times Square"
+        //   }
+        // }
+
+
+        {
+          "onlineStatus": false
+        }
+
+Response
+
+        {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": {
+        "vehicleInfo": {
+            "model": "Toyota Prius",
+            "plate": "DHA-9876",
+            "color": "White"
+        },
+        "currentLocation": {
+            "type": "Point",
+            "coordinates": [
+                -73.987654,
+                40.748817
+            ]
+        },
+        "_id": "688db8b44c75790eb47823ce",
+        "userId": "688db8b44c75790eb47823cc",
+        "licenseNumber": "DL1234567890",
+        "approvalStatus": "approved",
+        "onlineStatus": false,
+        "earnings": 0,
+        "rating": 0,
+        "__v": 0,
+        "updatedAt": "2025-08-05T07:13:00.855Z"
+    }
+      }
+
+
 🛡 Admin Endpoints
-Method	Endpoint	Description
-GET	/admin/users	List all users
-GET	/admin/rides	View all rides
+
+GET	api/vi/admin/users	List all users
+
+        {
+    "success": true,
+    "message": "Users retrieved successfully",
+    "data": [
+        {
+            "isBlocked": false,
+            "_id": "688cec0804a2997806a903d7",
+            "name": "Super admin",
+            "email": "super@gmail.com",
+            "password": "$2b$10$r5qd/8neKUI43dGzosbypufT1YapZtUcPDAleUItsNPKYj8GRvHle",
+            "role": "admin",
+            "isDeleted": false,
+            "isActive": "active",
+            "isVerified": true,
+            "createdAt": "2025-08-01T16:32:08.207Z",
+            "updatedAt": "2025-08-01T16:32:08.207Z",
+            "id": "688cec0804a2997806a903d7"
+        },
+        {
+            "_id": "688db8b44c75790eb47823cc",
+            "name": "John Driver",
+            "email": "john2.driver@example.com",
+            "password": "$2b$10$roLX3wwddQh0hBB4poVFwuhooanGlKysHil6vma.gCfdgnzk0aMky",
+            "role": "driver",
+            "phone": "+8801234567890",
+            "picture": "https://example.com/profile.jpg",
+            "address": "123 Main Street, Dhaka",
+            "isDeleted": false,
+            "isActive": "active",
+            "isVerified": false,
+            "createdAt": "2025-08-02T07:05:24.445Z",
+            "updatedAt": "2025-08-03T02:15:47.895Z",
+            "isBlocked": false,
+            "id": "688db8b44c75790eb47823cc"
+        },
+        {
+            "_id": "688db9a38405c606e3abb6af",
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "password": "$2b$10$91qSpAqOV3A4ocCbPrkXxOBhZGCbjHgTt6vOUbldxPsQcT4Hasblq",
+            "role": "rider",
+            "phone": "+8801234567890",
+            "picture": "https://example.com/profile.jpg",
+            "address": "123 Main Street, Dhaka, Bangladesh",
+            "isDeleted": false,
+            "isActive": "active",
+            "isVerified": false,
+            "createdAt": "2025-08-02T07:09:23.507Z",
+            "updatedAt": "2025-08-03T02:57:53.381Z",
+            "isBlocked": false,
+            "id": "688db9a38405c606e3abb6af"
+        },
+        {
+            "_id": "6891a9fde03816ba5786476d",
+            "name": "John Doe",
+            "email": "john1.doe@example.com",
+            "password": "$2b$10$io9WXF9AkR/gezxRfdlaoOawNVcLMsbRG1edv.N2AsTJAogEPs846",
+            "role": "rider",
+            "phone": "+8801234567890",
+            "picture": "https://example.com/profile.jpg",
+            "address": "123 Main Street, Dhaka, Bangladesh",
+            "isDeleted": false,
+            "isActive": "active",
+            "isBlocked": false,
+            "isVerified": false,
+            "createdAt": "2025-08-05T06:51:41.548Z",
+            "updatedAt": "2025-08-05T06:51:41.548Z",
+            "id": "6891a9fde03816ba5786476d"
+        }
+    ]
+    }
+GET	api/v1/admin/rides	View all rides
+
+
 PATCH	/drivers/approve/:id	Approve/suspend driver
+   
+   Request
+
+      {
+      "approvalStatus": "approved" 
+    }
+
+Response
+
+      {
+    "success": true,
+    "message": "Driver status updated to approved",
+    "data": {
+        "vehicleInfo": {
+            "model": "Toyota Prius",
+            "plate": "DHA-9876",
+            "color": "White"
+        },
+        "currentLocation": {
+            "type": "Point",
+            "coordinates": [
+                -73.987654,
+                40.748817
+            ]
+        },
+        "_id": "688db8b44c75790eb47823ce",
+        "userId": "688db8b44c75790eb47823cc",
+        "licenseNumber": "DL1234567890",
+        "approvalStatus": "approved",
+        "onlineStatus": false,
+        "earnings": 0,
+        "rating": 0,
+        "__v": 0,
+        "updatedAt": "2025-08-05T07:06:43.918Z"
+    }
+    }
 PATCH	/users/block/:id	Block/unblock user
+
+        {
+    "success": true,
+    "message": "User blocked successfully",
+    "data": {
+        "_id": "688db9a38405c606e3abb6af",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "password": "$2b$10$91qSpAqOV3A4ocCbPrkXxOBhZGCbjHgTt6vOUbldxPsQcT4Hasblq",
+        "role": "rider",
+        "phone": "+8801234567890",
+        "picture": "https://example.com/profile.jpg",
+        "address": "123 Main Street, Dhaka, Bangladesh",
+        "isDeleted": false,
+        "isActive": "active",
+        "isVerified": false,
+        "createdAt": "2025-08-02T07:09:23.507Z",
+        "updatedAt": "2025-08-05T07:19:02.343Z",
+        "isBlocked": true,
+        "id": "688db9a38405c606e3abb6af"
+    }
+    }
+PATCH	/users/unblock/:id
+
+      {
+    "success": true,
+    "message": "User unblocked successfully",
+    "data": {
+        "_id": "688db9a38405c606e3abb6af",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "password": "$2b$10$91qSpAqOV3A4ocCbPrkXxOBhZGCbjHgTt6vOUbldxPsQcT4Hasblq",
+        "role": "rider",
+        "phone": "+8801234567890",
+        "picture": "https://example.com/profile.jpg",
+        "address": "123 Main Street, Dhaka, Bangladesh",
+        "isDeleted": false,
+        "isActive": "active",
+        "isVerified": false,
+        "createdAt": "2025-08-02T07:09:23.507Z",
+        "updatedAt": "2025-08-05T07:20:08.397Z",
+        "isBlocked": false,
+        "id": "688db9a38405c606e3abb6af"
+    }
+      }
+
 🧩 Technologies Used
 Backend: Node.js, Express.js
 
