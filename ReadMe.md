@@ -50,16 +50,15 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 3. Configure environment
    ```bash
-Create .env file:
-
-PORT=5000
-DB_URL=mongodb://localhost:27017/ride-booking
-NODE_ENV=development
-JWT_ACCESS_SECRET=yourSecretKey
-JWT_ACCESS_EXPIRES=1d
-JWT_REFRESH_SECRET=yourSecretKey
-JWT_REFRESH_EXPIRES=7d
-BCRYPT_SALT_ROUNDS=10
+   Create .env file:
+    PORT=5000
+    DB_URL=mongodb://localhost:27017/ride-booking
+    NODE_ENV=development
+    JWT_ACCESS_SECRET=yourSecretKey
+    JWT_ACCESS_EXPIRES=1d
+    WT_REFRESH_SECRET=yourSecretKey
+    JWT_REFRESH_EXPIRES=7d
+    BCRYPT_SALT_ROUNDS=10
 
 4. Run the application
 
