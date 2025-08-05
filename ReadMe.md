@@ -36,8 +36,8 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 1. **Clone the repository**
   
    git clone https://github.com/yourusername/ride-booking-api.git
-   cd ride-booking-api
-Install dependencies
+ #  cd ride-booking-api
+# Install dependencies
 
 npm install
 Configure environment
