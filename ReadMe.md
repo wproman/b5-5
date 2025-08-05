@@ -63,10 +63,10 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 4. Run the application
 
     ```bash
-# Development
+ Development
     npm run dev
 
-# Production
+ Production
     npm run build
     npm start
 
