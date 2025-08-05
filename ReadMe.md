@@ -62,14 +62,16 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 4. Run the application
 
-```bash
+    ```bash
 # Development
-npm run dev
+    npm run dev
 
 # Production
-npm run build
-npm start
-🔗 API Endpoints
+    npm run build
+    npm start
+
+
+##  🔗 API Endpoints
 🔐 Authentication
 Method	Endpoint	Description
 POST	/auth/register	Register new user
