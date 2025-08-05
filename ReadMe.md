@@ -72,11 +72,32 @@ A secure, scalable, and role-based backend API for a ride booking system (like U
 
 
 5.## 🔗 API Endpoints
-    ```bash
-   **🔐 Authentication**
-    Method	Endpoint	Description
-    -POST	/auth/register	Register new user
-    -POST	/auth/login	Login and get JWT
+    
+  1.Register new user
+    POST	api/v1/auth/register	
+    Request:
+    ```bash 
+   {
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securePassword123",
+  "phone": "+8801234567890",
+  "picture": "https://example.com/profile.jpg",
+  "address": "123 Main Street, Dhaka, Bangladesh",
+  "isDeleted": false,
+  "isActive": "active",
+  "isVerified": true,
+  "auths": [
+    {
+      "provider": "google",
+      "providerId": "google-uid-12345"
+    }
+  ],
+  "role": "rider"
+}
+
+
+   POST	/auth/login	Login and get JWT
     -GET	/auth/me	Get current user
   **🧍 Rider Endpoints**
 Method	Endpoint	Description
