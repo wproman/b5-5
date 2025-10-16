@@ -8,7 +8,7 @@ import { updateUserSchemaZod, userIdParamSchema } from "./user.validate.zod";
 
 const router = Router();
 
-
+router.get(  "/me",  checkAuth(...Object.values(UserRole)),  UserController.getProfile);
 router.get(  "/all-user",  checkAuth(UserRole.ADMIN),  UserController.getAllUsers);
 router.patch(  "/block/:id", validateRequestParams(userIdParamSchema), checkAuth(UserRole.ADMIN),  UserController.blockUnblockUser);
 

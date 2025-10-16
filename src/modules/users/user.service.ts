@@ -39,12 +39,26 @@ const updateUserService = async (
   return updatedUser;
 };
 
-const getAllUsersService = async (): Promise<IUser[]> => {
-  const users = await User.find();
-  if (!users) {
-    throw new Error("No users found");
-  }
-  return users;
+const getAllUsersService = async (
+  query: Record<string, string | string[]>
+): Promise<IUser[]> => {
+   
+   const searchTerm = query.searchTerm || "";
+    delete query.searchTerm;
+   const toSeachableFields = ["name", "email", "phone"];   
+   const seachQuery = {$or : toSeachableFields.map((field) => ({
+     [field]: { $regex: searchTerm, $options: "i" },
+  }))};
+
+
+  const a = await User.find(seachQuery).find(query)
+     
+  // const a = await User.find(query)
+  // const users = await User.find();
+  // if (!users) {
+  //   throw new Error("No users found");
+  // }
+  return a;
 };
 
 
@@ -90,10 +104,16 @@ const toggleUserBlockStatus = async (
   return user;
 };
  
-
+const getProfileService = async (userId: string): Promise<IUser | null> => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+  return user;
+};
 
 export const UserService = {
-
+getProfileService,
   getAllUsersService,
   updateUserService,
   toggleUserBlockStatus
