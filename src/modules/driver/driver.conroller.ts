@@ -63,7 +63,7 @@ const approveOrSuspendDriver  = catchAsync(
         const verifiedToken = req.user
        const { approvalStatus } = req.body;
 
-         if (!['approved', 'pending', 'pending'  ].includes(approvalStatus)) {
+         if (!['approved', 'pending',   ].includes(approvalStatus)) {
       return sendResponse(res, {
         success: false,
         statusCode: 400,

@@ -45,15 +45,25 @@ const createUserService = async (payload: IRegisterRequest): Promise<IRegisterRe
 
 };
 
-const credentialslogin = async (payload: Partial<IUser>) => {
+export const credentialslogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
 
   if (!email || !password) {
     throw new AppError("Email and password are required", 400);
   }
+
   const isUserExist = await User.findOne({ email });
   if (!isUserExist) {
     throw new AppError("User not found", 404);
+  }
+
+  // 🚫 Blocked or deleted check
+  if (isUserExist.isBlocked) {
+    throw new AppError("Your account has been blocked. Please contact support.", 403);
+  }
+
+  if (isUserExist.isDeleted) {
+    throw new AppError("This account has been deleted.", 403);
   }
 
   const isPasswordValid = await bcrypt.compare(
@@ -65,13 +75,15 @@ const credentialslogin = async (payload: Partial<IUser>) => {
     throw new AppError("Invalid credentials", 401);
   }
 
-  const userTokens = await UserToken.createUserToken(isUserExist);    
+  const userTokens = await UserToken.createUserToken(isUserExist);
+
+  // remove password before returning user object
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: _, ...userWithoutPassword } = isUserExist.toObject();
+
   return {
-    accessToken: userTokens.accessToken,                                                                                              
+    accessToken: userTokens.accessToken,
     refreshToken: userTokens.refreshToken,
-    
     user: userWithoutPassword,
   };
 };
