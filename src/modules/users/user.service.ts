@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelper/AppError";
@@ -41,24 +42,41 @@ const updateUserService = async (
 
 const getAllUsersService = async (
   query: Record<string, string | string[]>
-): Promise<IUser[]> => {
-   
-   const searchTerm = query.searchTerm || "";
-    delete query.searchTerm;
-   const toSeachableFields = ["name", "email", "phone"];   
-   const seachQuery = {$or : toSeachableFields.map((field) => ({
-     [field]: { $regex: searchTerm, $options: "i" },
-  }))};
+): Promise<any[]> => {
+  const searchTerm = query.searchTerm || "";
+  delete query.searchTerm;
+  
+  const toSeachableFields = ["name", "email", "phone"];   
+  const searchConditions = toSeachableFields.map((field) => ({
+    [field]: { $regex: searchTerm, $options: "i" },
+  }));
 
+  const users = await User.aggregate([
+    // Match users based on search
+    {
+      $match: {
+        $or: searchConditions,
+        ...query
+      }
+    },
+    // Lookup driver data
+    {
+      $lookup: {
+        from: "drivers", // MongoDB collection name (usually pluralized)
+        localField: "_id",
+        foreignField: "userId",
+        as: "driver"
+      }
+    },
+    // Convert driver array to object (since it's one-to-one)
+    {
+      $addFields: {
+        driver: { $arrayElemAt: ["$driver", 0] }
+      }
+    }
+  ]);
 
-  const a = await User.find(seachQuery).find(query)
-     
-  // const a = await User.find(query)
-  // const users = await User.find();
-  // if (!users) {
-  //   throw new Error("No users found");
-  // }
-  return a;
+  return users;
 };
 
 
