@@ -1,15 +1,28 @@
-export const calculateFare = (
-  distanceKm: number,
-  durationMin: number,
-  surgeMultiplier = 1
-) => {
-  const BASE_FARE = 50; // BDT
-  const PER_KM_RATE = 25; // BDT per km
-  const PER_MIN_RATE = 2; // BDT per minute
+// Helper functions
+export const calculateFare = (distanceKm: number, durationMin: number, surgeMultiplier = 1) => {
+  const BASE_FARE = 50;
+  const PER_KM_RATE = 25;
+  const PER_MIN_RATE = 2;
 
-  const fare =
-    (BASE_FARE + distanceKm * PER_KM_RATE + durationMin * PER_MIN_RATE) *
-    surgeMultiplier;
+  const fare = (BASE_FARE + distanceKm * PER_KM_RATE + durationMin * PER_MIN_RATE) * surgeMultiplier;
+  return Math.max(fare, BASE_FARE);
+};
 
-  return Math.max(fare, BASE_FARE); // ensure not below base
+export const calculateMockDistanceAndDuration = (pickupAddress: string, destinationAddress: string) => {
+  const hashString = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  };
+
+  const addressHash = hashString(pickupAddress + destinationAddress);
+  const distance = 2 + (addressHash % 23);
+  const roundedDistance = Math.round(distance * 10) / 10;
+  const duration = Math.round(5 + (distance * 2));
+  
+  return { distance: roundedDistance, duration };
 };

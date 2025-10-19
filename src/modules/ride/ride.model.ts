@@ -5,19 +5,15 @@ const rideSchema = new Schema(
     riderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   driverId: { type: Schema.Types.ObjectId, ref: "User" },
 
-    pickupLocation: {
-      address: String,
-      coordinates: {
-        type: [Number], // [lng, lat]
-        required: true,
-      },
+   pickupLocation: {
+      // type: { type: String, enum: ["Point"], default: "Point" },
+      // coordinates: { type: [Number], required: true }, // [lng, lat]
+       address: { type: String, required: true },
     },
     destination: {
-      address: String,
-      coordinates: {
-        type: [Number],
-        required: true,
-      },
+      // type: { type: String, enum: ["Point"], default: "Point" },
+      // coordinates: { type: [Number], required: true },
+       address: { type: String, required: true },
     },
 
     rideStatus: {

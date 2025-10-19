@@ -2,7 +2,8 @@ import { Types } from "mongoose";
 
 interface ILocation {
   address: string;
-  coordinates: [number, number]; // [longitude, latitude]
+  // lat: number;
+  // lng: number;// [longitude, latitude]
 }
 
 interface IStatusHistoryItem {

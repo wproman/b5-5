@@ -1,7 +1,8 @@
 import { JwtPayload } from "jsonwebtoken";
 
 import AppError from "../../errorHelper/AppError";
-import { calculateFare } from "../../utils/fareCalculator";
+import { calculateFare, calculateMockDistanceAndDuration } from "../../utils/fareCalculator";
+import { ILocation } from "../driver/driver.interface";
 import { DriverModel } from "../driver/driver.model";
 import { UserRole } from "../users/user.interface";
 import { User } from "../users/user.models";
@@ -10,58 +11,70 @@ import { Ride } from "./ride.model";
 
 
 
-const requestRide  = async (
-  
-  payload: Partial<IRide>,
-  decodedToken: JwtPayload
-) => {
- 
-   const isRiderExist = await User.findOne({ email: decodedToken.email });
+const requestRide = async (payload: Partial<IRide>, decodedToken: JwtPayload) => {
+  const isRiderExist = await User.findOne({ email: decodedToken.email });
+  if (!isRiderExist) throw new AppError("Rider not found", 404);
 
-  if (!isRiderExist) {
-    throw new AppError("Rider not found", 404);
-  }
-
-  if (
-    
-    decodedToken.role !== UserRole.RIDER
-  ) {
+  if (decodedToken.role !== UserRole.RIDER)
     throw new AppError("Only riders can request rides", 403);
+
+  const { pickupLocation, destination, fare, distance } = payload;
+  if (!pickupLocation?.address || !destination?.address)
+    throw new AppError("Pickup and destination are required", 400);
+
+  if (!fare || !distance )
+    throw new AppError("Fare, distance and duration are required", 400);
+
+  const userId = isRiderExist._id;
+
+  const ongoingRide = await Ride.findOne({
+    riderId: userId,
+    rideStatus: { $nin: [RideStatus.COMPLETED, RideStatus.CANCELLED] },
+  });
+
+  if (ongoingRide) throw new AppError("You already have an ongoing ride", 400);
+
+  const newRide = await Ride.create({
+    riderId: userId,
+    pickupLocation: { address: pickupLocation.address },
+    destination: { address: destination.address },
+    fare,
+    distance,
+  
+    rideStatus: RideStatus.REQUESTED,
+    requestedAt: new Date(),
+    paymentStatus: "pending",
+  });
+
+  return newRide;
+};
+
+const estimateFare = async (payload: { pickup: ILocation; destination: ILocation }) => {
+  const { pickup, destination } = payload;
+
+  if (!pickup?.address || !destination?.address) {
+    throw new AppError("Pickup and destination addresses are required", 400);
   }
 
- const { pickupLocation, destination } = payload;
+  // Mock distance and duration calculation
+  const { distance, duration } = calculateMockDistanceAndDuration(pickup.address, destination.address);
+  
+  // Calculate fare using actual formula
+  const fare = calculateFare(distance, duration);
 
-    if (!pickupLocation || !destination) {
-      
-      throw new AppError("Pickup and destination are required", 400);
+  return {
+    distance,
+    duration,
+    fare: Math.round(fare),
+    breakdown: {
+      baseFare: 50,
+      distance,
+      duration,
+      perKmRate: 25,
+      perMinRate: 2,
+      total: Math.round(fare)
     }
- 
-    const userId = isRiderExist._id;
- 
-    // Optional: check if rider has an ongoing ride
-    const ongoingRide = await Ride.findOne({ rider: userId, status: { $nin: [RideStatus.COMPLETED, RideStatus.CANCELLED] } });
-    if (ongoingRide) {
-      
-        throw new AppError("you already have an ongoing ride", 400);
-    }
-
- // 5. (Mock) distance/duration 
-  const distanceKm = 7; 
-  const durationMin = 18; 
-  const fare = calculateFare(distanceKm, durationMin);
-
-
-   const newRide = await Ride.create({
-  riderId: userId,
-  pickupLocation,
-  destination,
-    fare,
-  status: RideStatus.REQUESTED,
-  requestedAt: new Date(),
-  paymentStatus: 'pending',
-});
-
-    return newRide;
+  };
 };
 
 
@@ -385,6 +398,7 @@ export const RideService = {
     cancelRide,
     getRidesByRiderId,
     submitRating,
-    adminToSeeAllRides
+    adminToSeeAllRides,
+    estimateFare
     };
   

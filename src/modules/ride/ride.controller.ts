@@ -6,30 +6,32 @@ import sendResponse from "../../utils/sendResponse";
 import { RideService } from "./ride.service";
 
 
-const requestRide  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async (req: Request, res: Response, _next: NextFunction) => {
-    
-       
-        const verifiedToken = req.user
-       
-        const payload = req.body;
-   
-        const rides = await RideService.requestRide(
-   
-          payload,
-          verifiedToken as JwtPayload
-        );
+const requestRide = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const verifiedToken = req.user;
+  const payload = req.body;
+  
+  const rides = await RideService.requestRide(payload, verifiedToken as JwtPayload);
 
-    sendResponse(res, {
-      success: true,
-      statusCode: 200,
-      message: "Users requested successfully",
-      data: rides,
-    });
-  }
-);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Ride requested successfully",
+    data: rides,
+  });
+});
 
+const estimateFare = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const payload = req.body;
+  
+  const fareEstimation = await RideService.estimateFare(payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Fare estimated successfully",
+    data: fareEstimation,
+  });
+});
 const acceptRide  = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, _next: NextFunction) => {
@@ -178,5 +180,6 @@ changeRideStatus,
 cancelRide,
 getRidesByRiderId,
 rateRide,
-adminToSeeAllRides
+adminToSeeAllRides,
+estimateFare
     };
