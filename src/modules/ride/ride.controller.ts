@@ -106,9 +106,24 @@ const cancelRide  = catchAsync(
     });
   }
 );
+const getRideDetails = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const { rideId } = req.params;
 
+ 
+  const verifiedToken = req.user;
+   
+  const ride = await RideService.getRideDetails(rideId, verifiedToken as JwtPayload);
+ 
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Ride details fetched successfully",
+    data: ride,
+  });
+});
 const getRidesByRiderId  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
+  
   async (req: Request, res: Response, _next: NextFunction) => {
             
      const verifiedToken = req.user     
@@ -181,5 +196,6 @@ cancelRide,
 getRidesByRiderId,
 rateRide,
 adminToSeeAllRides,
-estimateFare
+estimateFare,
+getRideDetails
     };

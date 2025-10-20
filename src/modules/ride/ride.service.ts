@@ -291,10 +291,35 @@ if (!allowedCancellationStates[decodedToken.role].includes(ride.rideStatus)) {
 
 }
 
+const getRideDetails = async (rideId: string, decodedToken: JwtPayload) => {
+  // Find the ride and populate rider and driver details
 
+  const ride = await Ride.findById(rideId)
+  
+    .populate('riderId', 'name email phone')
+    .populate('driverId', 'name email phone');
+  
+  if (!ride) {
+    throw new AppError("Ride not found", 404);
+  }
+
+  // Check if the user is authorized to view this ride
+  const isRider = decodedToken.role === UserRole.RIDER && ride.riderId._id.toString() === decodedToken.id;
+  const isDriver = decodedToken.role === UserRole.DRIVER && ride.driverId?._id.toString() === decodedToken.id;
+  const isAdmin = decodedToken.role === UserRole.ADMIN;
+
+  if (!isRider && !isDriver && !isAdmin) {
+    throw new AppError("Access denied", 403);
+  }
+
+  return ride;
+};
 const getRidesByRiderId = async (decodedToken: JwtPayload) => {
+
+
   const riderId = decodedToken.id;
 
+  
   const rides = await Ride.find({ riderId }).sort({ createdAt: -1 });
 
   return rides.map(ride => ({
@@ -399,6 +424,7 @@ export const RideService = {
     getRidesByRiderId,
     submitRating,
     adminToSeeAllRides,
-    estimateFare
+    estimateFare,
+    getRideDetails
     };
   
