@@ -4,6 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
+import { IUser } from "./user.interface";
 import { UserService } from "./user.service";
 
 // Get All Users Controller
@@ -24,26 +25,27 @@ const getAllUsers = catchAsync(
   }
 );
 
-const updateUser = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction) => {
-    const userId = req.params.id;
-    const verifiedToken = req.user;
-    const payload = req.body;
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.params.id; // From auth middleware
+  const { name, phone, address, picture } = req.body;
+  const decodedToken = req.user as JwtPayload
+    console.log('Request params ID:', userId);
+  console.log('Token user ID:', decodedToken.id);
+  console.log('Request body:', req.body);
+  const updateData: Partial<IUser> = {};
+  if (name) updateData.name = name;
+  if (phone) updateData.phone = phone;
+  if (address) updateData.address = address;
+  if (picture) updateData.picture = picture;
 
-    const users = await UserService.updateUserService(
-      userId,
-      payload,
-      verifiedToken as JwtPayload
-    );
+  const updatedUser = await UserService.updateUserService(userId, updateData, decodedToken);
 
-    sendResponse(res, {
-      success: true,
-      statusCode: 200,
-      message: "User updated successfully",
-      data: users,
-    });
-  }
-);
+  res.status(200).json({
+    success: true,
+    message: 'Profile updated successfully',
+    data: updatedUser
+  });
+});
 
 const blockUnblockUser = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {

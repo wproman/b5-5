@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -33,7 +34,7 @@ const estimateFare = catchAsync(async (req: Request, res: Response, _next: NextF
   });
 });
 const acceptRide  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
     
        
@@ -57,7 +58,7 @@ const acceptRide  = catchAsync(
 );
 
 const changeRideStatus  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
             const verifiedToken = req.user
        
@@ -82,7 +83,7 @@ const changeRideStatus  = catchAsync(
 );
 
 const cancelRide  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
             const verifiedToken = req.user
        
@@ -142,7 +143,7 @@ const getRidesByRiderId  = catchAsync(
 );
 
 const adminToSeeAllRides  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
             
         
@@ -162,7 +163,7 @@ const adminToSeeAllRides  = catchAsync(
 );
 
 const rateRide   = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
     
         const rideId = req.params.id;
@@ -184,6 +185,29 @@ const rateRide   = catchAsync(
 );
 
 
+const getMyRideHistory = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const verifiedToken = req.user;
+  const rides = await RideService.getMyRideHistory(verifiedToken as JwtPayload);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Ride history fetched successfully",
+    data: rides,
+  });
+});
+
+const getMyCurrentRide = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  const verifiedToken = req.user;
+  const currentRide = await RideService.getMyCurrentRide(verifiedToken as JwtPayload);
+  
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Current ride fetched successfully",
+    data: currentRide,
+  });
+});
 
 
 
@@ -197,5 +221,7 @@ getRidesByRiderId,
 rateRide,
 adminToSeeAllRides,
 estimateFare,
-getRideDetails
+getRideDetails,
+getMyRideHistory,
+getMyCurrentRide
     };
