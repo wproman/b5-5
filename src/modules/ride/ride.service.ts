@@ -416,6 +416,64 @@ const submitRating = async (
     return ride;
 
 }
+
+const getMyRideHistory = async (decodedToken: JwtPayload) => {
+  const userId = decodedToken.id;
+  const userRole = decodedToken.role;
+
+  // Find rides based on user role
+  const query = userRole === UserRole.RIDER 
+    ? { riderId: userId }
+    : { driverId: userId };
+
+  const rides = await Ride.find(query)
+    .sort({ createdAt: -1 }) // Latest first
+    .select('_id pickupLocation destination rideStatus fare paymentStatus requestedAt acceptedAt pickedUpAt completedAt statusHistory');
+
+  return rides.map(ride => ({
+    rideId: ride._id,
+    pickupLocation: ride.pickupLocation,
+    destination: ride.destination,
+    rideStatus: ride.rideStatus,
+    fare: ride.fare,
+    paymentStatus: ride.paymentStatus,
+    requestedAt: ride.requestedAt,
+    acceptedAt: ride.acceptedAt,
+    pickedUpAt: ride.pickedUpAt,
+    completedAt: ride.completedAt,
+    statusHistory: ride.statusHistory,
+  }));
+};
+
+const getMyCurrentRide = async (decodedToken: JwtPayload) => {
+  const userId = decodedToken.id;
+  const userRole = decodedToken.role;
+
+  // Find active rides (not completed or cancelled)
+  const query = userRole === UserRole.RIDER 
+    ? { riderId: userId, rideStatus: { $nin: ['completed', 'cancelled'] } }
+    : { driverId: userId, rideStatus: { $nin: ['completed', 'cancelled'] } };
+
+  const currentRide = await Ride.findOne(query)
+    .sort({ createdAt: -1 }) // Get the latest active ride
+    .select('_id pickupLocation destination rideStatus fare paymentStatus requestedAt acceptedAt pickedUpAt driverId riderId');
+
+  return currentRide ? {
+    rideId: currentRide._id,
+    pickupLocation: currentRide.pickupLocation,
+    destination: currentRide.destination,
+    rideStatus: currentRide.rideStatus,
+    fare: currentRide.fare,
+    paymentStatus: currentRide.paymentStatus,
+    requestedAt: currentRide.requestedAt,
+    acceptedAt: currentRide.acceptedAt,
+    pickedUpAt: currentRide.pickedUpAt,
+    // Include opposite party info
+    ...(userRole === UserRole.RIDER ? { driverId: currentRide.driverId } : { riderId: currentRide.riderId })
+  } : null;
+};
+
+
 export const RideService = {
     requestRide,
     acceptRide,
@@ -425,6 +483,8 @@ export const RideService = {
     submitRating,
     adminToSeeAllRides,
     estimateFare,
-    getRideDetails
+    getRideDetails,
+    getMyRideHistory,
+    getMyCurrentRide
     };
   

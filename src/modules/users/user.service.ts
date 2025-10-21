@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import bcrypt from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errorHelper/AppError";
 import { DriverModel } from "../driver/driver.model";
@@ -13,33 +12,42 @@ const updateUserService = async (
   payload: Partial<IUser>,
   decodedToken: JwtPayload
 ) => {
+  // Check if user exists
   const isUserExist = await User.findById(userId);
   if (!isUserExist) {
     throw new AppError("User not found", 404);
   }
 
-  if (
+  // Authorization: User can only update their own profile, admin can update any
+  if (decodedToken.id !== userId && decodedToken.role !== UserRole.ADMIN) {
+    throw new AppError("You are not authorized to update this profile", 403);
+  }
+
+  // Regular users can only update specific fields
+  if (decodedToken.role !== UserRole.ADMIN) {
+    const allowedFields = ['name', 'phone', 'address', 'picture'];
+    const forbiddenFields = Object.keys(payload).filter(
+      field => !allowedFields.includes(field)
+    );
     
-    decodedToken.role !== UserRole.ADMIN
-  ) {
-    throw new AppError("You are not authorized to update role", 403);
+    if (forbiddenFields.length > 0) {
+      throw new AppError(`You are not authorized to update: ${forbiddenFields.join(', ')}`, 403);
+    }
   }
 
-  if (payload.isDeleted || payload.isVerified || payload.isActive) {
-    throw new AppError("You are not authorized to update this field", 403);
-  }
-
+  // Handle password separately (should use changePassword endpoint)
   if (payload.password) {
-    const hashedPassword = bcrypt.hashSync(payload.password as string, 10);
-    payload.password = hashedPassword;
+    throw new AppError("Please use the change password endpoint to update password", 400);
   }
+
+  // Update user
   const updatedUser = await User.findByIdAndUpdate(userId, payload, {
     new: true,
     runValidators: true,
-  });
+  }).select('-password'); // Exclude password from response
+
   return updatedUser;
 };
-
 const getAllUsersService = async (
   query: Record<string, string | string[]>
 ): Promise<any[]> => {

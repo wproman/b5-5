@@ -93,7 +93,7 @@ const resetPassword = catchAsync( async (req: Request, res: Response, _next: Nex
       success: true,
       statusCode: 200,
       message: "User password changed  successfully",
-      data: null,
+      data:null ,
     });
   }
 );

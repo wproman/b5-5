@@ -11,7 +11,7 @@ router.post(  "/register",  validateRequest(userSchemaZod),AuthController.create
 router.post("/login", AuthController.credentialsLogin);
 router.post( "/refresh-token", AuthController.getNewAccessToken);
 router.post("/logout", AuthController.logout);
-router.post ("/reset-password", checkAuth(...Object.values(UserRole)), AuthController.resetPassword);
+router.patch ("/reset-password", checkAuth(...Object.values(UserRole)), AuthController.resetPassword);
 
 
 export const AuthRoutes = router;

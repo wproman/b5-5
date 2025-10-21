@@ -9,12 +9,18 @@ import { updateUserSchemaZod, userIdParamSchema } from "./user.validate.zod";
 const router = Router();
 
 router.get(  "/me",  checkAuth(...Object.values(UserRole)),  UserController.getProfile);
+
+//ai routhe ta add korlam 7:27pm
+router.patch(  "/profile/:id",  checkAuth(...Object.values(UserRole)),  UserController.updateUser);
+
+
+
 router.get(  "/all-user",  checkAuth(UserRole.ADMIN),  UserController.getAllUsers);
 router.patch(  "/block/:id", validateRequestParams(userIdParamSchema), checkAuth(UserRole.ADMIN),  UserController.blockUnblockUser);
 
 router.patch( '/unblock/:id', checkAuth(UserRole.ADMIN), UserController.blockUnblockUser
 );
 
-router.patch(  "/:id", validateRequest(updateUserSchemaZod),  checkAuth(...Object.values(UserRole)), UserController.updateUser);
+router.patch(  "/update/:id", validateRequest(updateUserSchemaZod),  checkAuth(...Object.values(UserRole)), UserController.updateUser);
 
 export const UserRoutes = router;
