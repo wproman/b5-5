@@ -77,7 +77,62 @@ const estimateFare = async (payload: { pickup: ILocation; destination: ILocation
   };
 };
 
+// services/rideService.ts
+const getIncomingRides = async (
+  decodedToken: JwtPayload
+) => {
+  // 1. Ensure role is DRIVER
+  if (decodedToken.role !== UserRole.DRIVER) {
+    throw new AppError("Only drivers can view incoming rides", 403);
+  }
 
+  // 2. Find the driver user
+  const driverUser = await User.findOne({ email: decodedToken.email });
+  if (!driverUser) {
+    throw new AppError("Driver user not found", 404);
+  }
+
+  // 3. Get the driver's additional info from DriverModel
+  const driverProfile = await DriverModel.findOne({ userId: driverUser._id });
+  if (!driverProfile) {
+    throw new AppError("Driver profile not found", 404);
+  }
+
+  // 4. Check if driver is approved and online
+  if (driverProfile.approvalStatus !== "approved" || !driverProfile.onlineStatus) {
+    throw new AppError("Driver not approved or not online", 403);
+  }
+
+  // 5. Get incoming ride requests (rides that are requested and not assigned to any driver)
+  const incomingRides = await Ride.find({
+    rideStatus: "requested",
+    driverId: { $exists: false }, // No driver assigned yet
+    // Optional: Add location-based filtering if you have coordinates
+    // You can add geospatial queries here based on driver's currentLocation
+  })
+    .populate('riderId', 'name phone rating') // Populate rider info
+    .select('pickupLocation destination fare distance requestedAt estimatedDuration')
+    .sort({ requestedAt: -1 }); // Most recent first
+
+  // 6. Format the response
+  const formattedRides = incomingRides.map(ride => ({
+    _id: ride._id,
+    riderId: {
+      _id: ride.riderId._id,
+      // name: ride.riderId.name,
+      // phone: ride.riderId.phone,
+      // rating: ride.riderId.rating || 4.5 // Default rating if not available
+    },
+    pickupLocation: ride.pickupLocation,
+    destination: ride.destination,
+    fare: ride.fare,
+    // distance: ride.distance,
+    requestedAt: ride.requestedAt,
+    // estimatedDuration: ride.estimatedDuration || 15 // Default duration if not available
+  }));
+
+  return formattedRides;
+};
 
 const acceptRide = async (
   reqId: string,
@@ -485,6 +540,7 @@ export const RideService = {
     estimateFare,
     getRideDetails,
     getMyRideHistory,
-    getMyCurrentRide
+    getMyCurrentRide,
+    getIncomingRides
     };
   

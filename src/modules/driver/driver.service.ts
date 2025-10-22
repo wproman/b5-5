@@ -8,50 +8,107 @@ import { DriverModel } from "./driver.model";
 
 
 
-const changeOnlineStatus  = async (
+// const changeOnlineStatus  = async (
   
+//   payload: Partial<IDriver>,
+//   decodedToken: JwtPayload
+// ) => {
+//  // 1. Find driver by ID (not userId)
+//    const isDriverExist = await DriverModel.findOne({ userId: decodedToken.id });
+    
+   
+//   if (!isDriverExist) {
+//     throw new AppError("Driver not found", 404);
+//   }
+
+//  // 2. Check if driver is approved
+//   if (isDriverExist.approvalStatus !== 'approved') {
+//     throw new AppError('Your driver account is not approved', 403);
+//   }
+//  // 3. Update status and location
+//  if (typeof payload.onlineStatus === 'boolean') {
+//   isDriverExist.onlineStatus = payload.onlineStatus;
+// }
+//   if (payload.currentLocation) {
+//     isDriverExist.currentLocation = {
+//       type: 'Point',
+//       coordinates: payload.currentLocation.coordinates,
+      
+//     };
+//   }
+
+//    // 4. If going offline, check for active rides
+//   if (!payload.onlineStatus) {
+//     const activeRide = await checkActiveRides(isDriverExist._id.toString());
+//     if (activeRide) {
+//       throw new AppError(
+//         'Cannot go offline while having an active ride', 
+//         400
+//       );
+//     }
+//   }
+
+//  await isDriverExist.save();
+//   return isDriverExist;
+// };
+const getDriverStatus = async (
   payload: Partial<IDriver>,
   decodedToken: JwtPayload
 ) => {
- 
-   const isDriverExist = await DriverModel.findOne({ userId: decodedToken.id });
-    
-   
+  // 1. Find driver
+  const isDriverExist = await DriverModel.findOne({ userId: decodedToken.id });
+  
   if (!isDriverExist) {
     throw new AppError("Driver not found", 404);
   }
 
- // 2. Check if driver is approved
+  // Return only the required status fields
+  return {
+    onlineStatus: isDriverExist.onlineStatus,
+    approvalStatus: isDriverExist.approvalStatus,
+  };
+};
+const changeOnlineStatus = async (
+  payload: Partial<IDriver>,
+  decodedToken: JwtPayload
+) => {
+ 
+
+  // 1. Find driver
+  const isDriverExist = await DriverModel.findOne({ userId: decodedToken.id });
+  
+  
+  if (!isDriverExist) {
+    
+    throw new AppError("Driver not found", 404);
+  }
+
+  // 2. Check if driver is approved
+ 
   if (isDriverExist.approvalStatus !== 'approved') {
     throw new AppError('Your driver account is not approved', 403);
   }
- // 3. Update status and location
- if (typeof payload.onlineStatus === 'boolean') {
-  isDriverExist.onlineStatus = payload.onlineStatus;
-}
-  if (payload.currentLocation) {
-    isDriverExist.currentLocation = {
-      type: 'Point',
-      coordinates: payload.currentLocation.coordinates,
-      
-    };
+
+  // 3. Update status
+  if (typeof payload.onlineStatus === 'boolean') {
+    
+    isDriverExist.onlineStatus = payload.onlineStatus;
   }
 
-   // 4. If going offline, check for active rides
-  if (!payload.onlineStatus) {
+  // 4. If going offline, check for active rides
+  if (payload.onlineStatus === false) {
+   
     const activeRide = await checkActiveRides(isDriverExist._id.toString());
     if (activeRide) {
-      throw new AppError(
-        'Cannot go offline while having an active ride', 
-        400
-      );
+      throw new AppError('Cannot go offline while having an active ride', 400);
     }
   }
 
- await isDriverExist.save();
+  await isDriverExist.save();
+ 
+  
   return isDriverExist;
 };
-
 const getEarningsHistory  = async (
   
   payload: Partial<IDriver>,
@@ -115,6 +172,7 @@ const updateDriverStatus  = async (
 export const DriverService = {
   changeOnlineStatus,
   getEarningsHistory,
-  updateDriverStatus
+  updateDriverStatus,
+  getDriverStatus
     };
   

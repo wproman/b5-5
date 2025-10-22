@@ -33,6 +33,23 @@ const estimateFare = catchAsync(async (req: Request, res: Response, _next: NextF
     data: fareEstimation,
   });
 });
+// controllers/rideController.ts
+const getIncomingRides = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const verifiedToken = req.user;
+    
+    const result = await RideService.getIncomingRides(
+      verifiedToken as JwtPayload
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Incoming rides fetched successfully",
+      data: result,
+    });
+  }
+);
 const acceptRide  = catchAsync(
    
   async (req: Request, res: Response, _next: NextFunction) => {
@@ -223,5 +240,6 @@ adminToSeeAllRides,
 estimateFare,
 getRideDetails,
 getMyRideHistory,
-getMyCurrentRide
+getMyCurrentRide,
+getIncomingRides
     };

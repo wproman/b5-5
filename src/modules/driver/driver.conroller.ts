@@ -5,6 +5,24 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { DriverService } from "./driver.service";
 
+// Add this to your driverController.ts
+export const getDriverStatus = catchAsync(async (req: Request, res: Response) => {
+  const verifiedToken = req.user
+       
+        const payload = req.body;
+ const status = await DriverService.getDriverStatus(
+   
+          payload,
+          verifiedToken as JwtPayload
+        );
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "Driver status fetched successfully",
+    data: status
+  });
+});
+
 
 
 const changeOnlineStatus  = catchAsync(
@@ -89,5 +107,6 @@ export const DriverController = {
  changeOnlineStatus,
  getEarningsHistory,
  approveOrSuspendDriver,
+ getDriverStatus
 
     };

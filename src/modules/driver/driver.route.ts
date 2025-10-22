@@ -10,7 +10,7 @@ import { DriverController } from "./driver.conroller";
 const router = Router();
 
 
-
+router.get('/status', checkAuth(UserRole.DRIVER), DriverController.getDriverStatus)
 router.patch(  "/availability",  checkAuth(UserRole.DRIVER), DriverController.changeOnlineStatus);
 
 router.get('/earnings', checkAuth(UserRole.DRIVER), DriverController.getEarningsHistory);
