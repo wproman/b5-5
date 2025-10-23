@@ -19,6 +19,7 @@ export enum RideStatus {
   IN_TRANSIT = "in_transit",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
+  REJECTED = "rejected"
 }
 export interface IRatingInput {
   rating: number;
@@ -26,26 +27,30 @@ export interface IRatingInput {
 }
 export interface IRide {
   _id: string;
- riderId: Types.ObjectId;
-  driverId?: Types.ObjectId;// Optional until accepted
+  riderId: Types.ObjectId;
+  driverId?: Types.ObjectId; // Optional until accepted
   pickupLocation: ILocation;
   destination: ILocation;
   rideStatus: RideStatus;
   fare: number;
-  distance: number; // in kilometers
+  distance: number;
   requestedAt: Date;
   acceptedAt?: Date;
   pickedUpAt?: Date;
   completedAt?: Date;
   cancelledAt?: Date;
   cancelledBy?: 'rider' | 'driver' | 'system';
+  
+  // ADD THESE REJECTION FIELDS
+  rejectedAt?: Date;
+  rejectedBy?: Types.ObjectId; // Store driver ID who rejected
+  rejectionReason?: string;
+  
   statusHistory: IStatusHistoryItem[];
   riderRating?: IRatingInput;
   driverRating?: IRatingInput;
-
-   paymentStatus: 'pending' | 'paid' | 'refunded';
+  paymentStatus: 'pending' | 'paid' | 'refunded';
 }
-
 export interface IRideQuery {
   page?: number;
   limit?: number;

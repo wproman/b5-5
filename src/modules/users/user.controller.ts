@@ -29,9 +29,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const userId = req.params.id; // From auth middleware
   const { name, phone, address, picture } = req.body;
   const decodedToken = req.user as JwtPayload
-    console.log('Request params ID:', userId);
-  console.log('Token user ID:', decodedToken.id);
-  console.log('Request body:', req.body);
+    
   const updateData: Partial<IUser> = {};
   if (name) updateData.name = name;
   if (phone) updateData.phone = phone;
@@ -70,7 +68,7 @@ const getProfile = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const verifiedToken = req.user as JwtPayload;
     const userId = verifiedToken.id;
-
+  
     const user = await UserService.getProfileService(userId);
 
     sendResponse(res, {

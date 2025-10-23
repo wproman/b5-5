@@ -34,45 +34,8 @@ const estimateFare = catchAsync(async (req: Request, res: Response, _next: NextF
   });
 });
 // controllers/rideController.ts
-const getIncomingRides = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction) => {
-    const verifiedToken = req.user;
-    
-    const result = await RideService.getIncomingRides(
-      verifiedToken as JwtPayload
-    );
 
-    sendResponse(res, {
-      success: true,
-      statusCode: 200,
-      message: "Incoming rides fetched successfully",
-      data: result,
-    });
-  }
-);
-const acceptRide  = catchAsync(
-   
-  async (req: Request, res: Response, _next: NextFunction) => {
-    
-       
-        const verifiedToken = req.user
-       
-       
-        const reqId = req.params.id;
-        const result = await RideService.acceptRide(
-          reqId,
-          
-          verifiedToken as JwtPayload
-        );
 
-    sendResponse(res, {
-      success: true,
-      statusCode: 200,
-      message: "Diver accept request successfully",
-      data: result,
-    });
-  }
-);
 
 const changeRideStatus  = catchAsync(
    
@@ -124,6 +87,30 @@ const cancelRide  = catchAsync(
     });
   }
 );
+// In your rideController.ts
+const rejectRide = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const verifiedToken = req.user;
+    const { reason } = req.body;
+    const rideId = req.params.id;
+
+    const ride = await RideService.rejectRide(
+      rideId,
+      verifiedToken as JwtPayload,
+      reason,
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Ride request rejected successfully",
+      data: ride,
+    });
+  }
+);
+
+
+
 const getRideDetails = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
   const { rideId } = req.params;
 
@@ -231,7 +218,7 @@ const getMyCurrentRide = catchAsync(async (req: Request, res: Response, _next: N
 
 export const RideController = {
     requestRide ,
-    acceptRide,
+   
 changeRideStatus,
 cancelRide,
 getRidesByRiderId,
@@ -241,5 +228,6 @@ estimateFare,
 getRideDetails,
 getMyRideHistory,
 getMyCurrentRide,
-getIncomingRides
+rejectRide
+
     };

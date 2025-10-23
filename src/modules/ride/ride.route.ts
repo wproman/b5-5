@@ -1,43 +1,32 @@
 import { Router } from "express";
-import checAuth from "../../middleware/checkAuth";
-// import { UserController } from "./user.controller";
-
+import checkAuth from "../../middleware/checkAuth";
 import { UserRole } from "../users/user.interface";
 import { RideController } from "./ride.controller";
-// import { updateUserSchemaZod } from "./user.validate.zod";
-
 
 const router = Router();
 
+// ==================== POST ROUTES ====================
+router.post("/request", checkAuth(UserRole.RIDER), RideController.requestRide);
+router.post("/estimate", checkAuth(UserRole.RIDER), RideController.estimateFare);
 
-router.post(  "/request",  checAuth(UserRole.RIDER), RideController.requestRide);
-router.post(  "/estimate",  checAuth(UserRole.RIDER), RideController.estimateFare);
+// ==================== SPECIFIC GET ROUTES (FIRST) ====================
 
-// Get ride history for current user (both rider and driver)
-router.get('/my-rides/history', checAuth(UserRole.RIDER, UserRole.DRIVER), RideController.getMyRideHistory);
+router.get("/all-rides", checkAuth(UserRole.ADMIN), RideController.adminToSeeAllRides);
+router.get('/my-rides/history', checkAuth(UserRole.RIDER, UserRole.DRIVER), RideController.getMyRideHistory);
+router.get('/my-rides/current', checkAuth(UserRole.RIDER, UserRole.DRIVER), RideController.getMyCurrentRide);
 
-// Get current/latest active ride for current user
-router.get('/my-rides/current', checAuth(UserRole.RIDER, UserRole.DRIVER), RideController.getMyCurrentRide);
+// ==================== PARAMETER ROUTES (LAST) ====================
+router.get('/:rideId', checkAuth(UserRole.RIDER, UserRole.DRIVER, UserRole.ADMIN), RideController.getRideDetails);
+router.get('/:userId', checkAuth(UserRole.RIDER), RideController.getRidesByRiderId);
 
+// ==================== PATCH ROUTES ====================
 
-// Single ride details by ID
-router.get('/:rideId', checAuth(UserRole.RIDER, UserRole.DRIVER, UserRole.ADMIN), RideController.getRideDetails);
+router.patch("/:id/status", checkAuth(UserRole.DRIVER), RideController.changeRideStatus);
+router.patch("/:id/cancel", checkAuth(UserRole.RIDER), RideController.cancelRide);
+// In your rideRoutes.ts
+router.patch("/:id/reject", checkAuth(UserRole.DRIVER), RideController.rejectRide);
 
-
-router.get('/:userId', checAuth(UserRole.RIDER), RideController.getRidesByRiderId);
-
-
-
-// router.get(  "/imcoming",  checAuth(UserRole.DRIVER), RideController.getIncomingRides);
-router.patch(  "/:id/accept",  checAuth(UserRole.DRIVER), RideController.acceptRide);
-router.patch(  "/:id/status",  checAuth(UserRole.DRIVER), RideController.changeRideStatus);
-router.patch(  "/:id/cancel",  checAuth(UserRole.RIDER, UserRole.DRIVER), RideController.cancelRide);
-
-router.get('/all-rides', checAuth(UserRole.ADMIN), RideController.adminToSeeAllRides);
-
-router.post('/:id/rate', checAuth(UserRole.RIDER), RideController.rateRide);
-
-
-
+// ==================== OTHER ROUTES ====================
+router.post('/:id/rate', checkAuth(UserRole.RIDER), RideController.rateRide);
 
 export const RiderRoutes = router;

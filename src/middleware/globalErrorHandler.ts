@@ -1,3 +1,6 @@
+
+
+
 import { NextFunction, Request, Response } from "express";
 
 import { envVars } from "../config";
@@ -10,8 +13,14 @@ import { TErrorSources } from "../interfaces/error.types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+    // ✅ CRITICAL FIX: Check if headers have already been sent
+    if (res.headersSent) {
+        console.error('GlobalErrorHandler: Headers already sent, skipping error response');
+        return next(err);
+    }
+
     if (envVars.NODE_ENV === "development") {
-        // console.log(err);
+        console.log('GlobalErrorHandler:', err);
     }
 
     let errorSources: TErrorSources[] = []
@@ -51,11 +60,16 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         message = err.message
     }
 
-    res.status(statusCode).json({
-        success: false,
-        message,
-        errorSources,
-        err: envVars.NODE_ENV === "development" ? err : null,
-        stack: envVars.NODE_ENV === "development" ? err.stack : null
-    })
+    // ✅ Double check before sending response
+    if (!res.headersSent) {
+        res.status(statusCode).json({
+            success: false,
+            message,
+            errorSources,
+            err: envVars.NODE_ENV === "development" ? err : null,
+            stack: envVars.NODE_ENV === "development" ? err.stack : null
+        });
+    } else {
+        console.error('GlobalErrorHandler: Cannot send response - headers already sent');
+    }
 }

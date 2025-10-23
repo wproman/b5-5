@@ -132,6 +132,7 @@ const toggleUserBlockStatus = async (
  
 const getProfileService = async (userId: string): Promise<IUser | null> => {
   const user = await User.findById(userId);
+     console.log('Service - Looking for user with ID:', userId); // Debug
   if (!user) {
     throw new AppError("User not found", 404);
   }

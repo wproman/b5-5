@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -23,10 +24,52 @@ export const getDriverStatus = catchAsync(async (req: Request, res: Response) =>
   });
 });
 
+// controllers/rideController.ts
+const getIncomingRides = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const verifiedToken = req.user;
+    
+    const result = await DriverService.getIncomingRides(
+      verifiedToken as JwtPayload
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Incoming rides fetched successfully",
+      data: result,
+    });
+  }
+);
+
+const acceptRide  = catchAsync(
+   
+  async (req: Request, res: Response, _next: NextFunction) => {
+    
+       
+        const verifiedToken = req.user
+       
+       
+        const reqId = req.params.id;
+        const result = await DriverService.acceptRide(
+          reqId,
+          
+          verifiedToken as JwtPayload
+        );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Diver accept request successfully",
+      data: result,
+    });
+  }
+);
+
 
 
 const changeOnlineStatus  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
     
        
@@ -50,7 +93,7 @@ const changeOnlineStatus  = catchAsync(
 );
 
 const getEarningsHistory  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
     
        
@@ -74,7 +117,7 @@ const getEarningsHistory  = catchAsync(
 );
 
 const approveOrSuspendDriver  = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, _next: NextFunction) => {
     
         const driverId = req.params.id;
@@ -107,6 +150,9 @@ export const DriverController = {
  changeOnlineStatus,
  getEarningsHistory,
  approveOrSuspendDriver,
- getDriverStatus
+ getDriverStatus,
+ getIncomingRides,
+ acceptRide,
+//  rejectRide
 
     };
