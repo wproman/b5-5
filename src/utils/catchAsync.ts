@@ -13,11 +13,11 @@ const catchAsync = (fn: AsyncHandler) => {
     Promise.resolve(fn(req, res, next)).catch((error: any) => {
       // Check if headers have already been sent
       if (res.headersSent) {
-        console.error('Headers already sent, skipping error handler');
+      
         return;
       }
       
-      console.error("Error in AsyncHandler:", error);
+   
       next(error);
     });
   };

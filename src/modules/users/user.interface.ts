@@ -5,7 +5,14 @@ export enum UserRole {
   RIDER = "rider",
   DRIVER = "driver",
 }
-
+// Add this interface for emergency contacts
+export interface IEmergencyContact {
+  name: string;
+  number: string;
+  type: 'personal' | 'police' | 'hospital';
+  relationship?: string;
+  isPrimary?: boolean;
+}
 export enum IsActive {
   ACTIVE = "active",
   INACTIVE = "inactive",
@@ -23,6 +30,7 @@ export interface IUser {
   email: string;
   password?: string;
   phone?: string;
+  emergencyContacts?: IEmergencyContact[]; 
   picture?: string;
   address?: string;
   isDeleted?: boolean;

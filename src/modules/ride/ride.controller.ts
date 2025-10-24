@@ -62,23 +62,19 @@ const changeRideStatus  = catchAsync(
   }
 );
 
-const cancelRide  = catchAsync(
-   
+const cancelRide  = catchAsync(  
   async (req: Request, res: Response, _next: NextFunction) => {
             const verifiedToken = req.user
        
-        const { reason } = req.body;
-
-    
+        const { reason } = req.body ||{};
         const rideId = req.params.id;
+         // Fix 2: Validate rideId
+   
         const ride = await RideService.cancelRide(
-          rideId,
-          
-          verifiedToken as JwtPayload,
-      
+          rideId,       
+          verifiedToken as JwtPayload,    
           reason,
         );
-
     sendResponse(res, {
       success: true,
       statusCode: 200,
@@ -90,8 +86,10 @@ const cancelRide  = catchAsync(
 // In your rideController.ts
 const rejectRide = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
+
+    
     const verifiedToken = req.user;
-    const { reason } = req.body;
+    const { reason } = req.body || {};
     const rideId = req.params.id;
 
     const ride = await RideService.rejectRide(

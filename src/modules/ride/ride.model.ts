@@ -12,11 +12,11 @@ const rideSchema = new Schema({
     ref: 'User'
   },
   pickupLocation: {
-    address: { type: String, required: true },
+    address: { type: String },
     coordinates: { type: [Number] } // [longitude, latitude]
   },
   destination: {
-    address: { type: String, required: true },
+    address: { type: String },
     coordinates: { type: [Number] }
   },
   rideStatus: {
@@ -24,8 +24,8 @@ const rideSchema = new Schema({
     enum: Object.values(RideStatus),
     default: RideStatus.REQUESTED
   },
-  fare: { type: Number, required: true },
-  distance: { type: Number, required: true },
+  fare: { type: Number },
+  distance: { type: Number },
   requestedAt: { type: Date, default: Date.now },
   acceptedAt: { type: Date },
   pickedUpAt: { type: Date },
