@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
@@ -80,10 +81,79 @@ const getProfile = catchAsync(
   }
 );
 
+//Emergency contract Controller
+export const updateEmergencyContacts = catchAsync(async (req: Request, res: Response,_next: NextFunction) => {
+  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const { emergencyContacts } = req.body;
+  const decodedToken = req.user as any;
+
+  const updatedUser = await UserService.updateEmergencyContactsService(userId, { emergencyContacts }, decodedToken);
+
+  res.status(200).json({
+    success: true,
+    message: 'Emergency contacts updated successfully',
+    data: updatedUser
+  });
+});
+
+export const getEmergencyContacts = catchAsync(async (req: Request, res: Response,_next: NextFunction) => {
+ const verifiedToken = req.user as JwtPayload;
+    const userId = verifiedToken.id;
+  const contacts = await UserService.getEmergencyContactsService(userId, verifiedToken);
+
+  res.status(200).json({
+    success: true,
+    message: 'Emergency contacts retrieved successfully',
+    data: contacts
+  });
+});
+
+export const addEmergencyContact = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const { name, number, type, relationship, isPrimary } = req.body;
+  const decodedToken = req.user as any;
+
+  const contactData = {
+    name,
+    number,
+    type,
+    relationship,
+    isPrimary
+  };
+
+  const updatedUser = await UserService.addEmergencyContactService(userId, contactData, decodedToken);
+
+  res.status(200).json({
+    success: true,
+    message: 'Emergency contact added successfully',
+    data: updatedUser
+  });
+});
+
+export const removeEmergencyContact = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const { contactIndex } = req.params;
+  const decodedToken = req.user as any;
+
+  const index = parseInt(contactIndex);
+
+  const updatedUser = await UserService.removeEmergencyContactService(userId, index, decodedToken);
+
+  res.status(200).json({
+    success: true,
+    message: 'Emergency contact removed successfully',
+    data: updatedUser
+  });
+});
+
 // Export controller
 export const UserController = {
   getProfile,
   getAllUsers,
   updateUser,
   blockUnblockUser,
+  removeEmergencyContact,
+  addEmergencyContact,
+  getEmergencyContacts,
+  updateEmergencyContacts
 };
