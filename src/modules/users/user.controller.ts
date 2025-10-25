@@ -83,7 +83,7 @@ const getProfile = catchAsync(
 
 //Emergency contract Controller
 export const updateEmergencyContacts = catchAsync(async (req: Request, res: Response,_next: NextFunction) => {
-  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const userId = req.params.userId; // From auth middleware
   const { emergencyContacts } = req.body;
   const decodedToken = req.user as any;
 
@@ -109,7 +109,7 @@ export const getEmergencyContacts = catchAsync(async (req: Request, res: Respons
 });
 
 export const addEmergencyContact = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const userId = req.params.userId; // From auth middleware
   const { name, number, type, relationship, isPrimary } = req.body;
   const decodedToken = req.user as any;
 
@@ -131,7 +131,7 @@ export const addEmergencyContact = catchAsync(async (req: Request, res: Response
 });
 
 export const removeEmergencyContact = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.params.userId || req.user?.id; // From auth middleware
+  const userId = req.params.userId ; // From auth middleware
   const { contactIndex } = req.params;
   const decodedToken = req.user as any;
 
