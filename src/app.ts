@@ -44,20 +44,7 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 
-// Add this before your routes
-app.get("/api/v1/test-mobile", (req, res) => {
-  console.log('=== MOBILE TEST REQUEST ===');
-  console.log('Origin:', req.headers.origin);
-  console.log('User-Agent:', req.headers['user-agent']);
-  console.log('====================');
-  
-  res.json({ 
-    success: true, 
-    message: "Backend is reachable",
-    timestamp: new Date().toISOString(),
-    userAgent: req.headers['user-agent']
-  });
-});
+
 
 // Global Error Handler
 app.use(globalErrorHandler);
