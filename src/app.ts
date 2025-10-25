@@ -9,14 +9,9 @@ import notFound from "./middleware/notFound";
 import { router } from "./routes";
 
 
-// import helmet from 'helmet';
-// Middlewares
-// app.use(helmet());
-
-// app.use(morgan('dev'));
 const app: Application = express();
 app.use(exressSession({
-  secret: "your secret",
+  secret: process.env.SESSION_SECRET || 'fallback_secret_change_in_production',
   resave: false,
   saveUninitialized: false
 }))
