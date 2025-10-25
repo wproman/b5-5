@@ -80,29 +80,19 @@ const getNewAccessToken = catchAsync(
 //   }
 // );
 //h
+// controllers/authController.ts
 
-const logout = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-   
-   res.clearCookie("accessToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-   });
 
-   res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-   });
+export const logout = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
+  CookieHelper.clearAuthCookies(res);
 
-    sendResponse(res, {
-      success: true,
-      statusCode: 200,
-      message: "User logged out successfully", // Fixed message
-      data: null,
-    });
-  }
-);
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User logged out successfully",
+    data: null,
+  });
+});
 
 const resetPassword = catchAsync( async (req: Request, res: Response, _next: NextFunction) => {
    
