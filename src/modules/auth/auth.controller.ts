@@ -2,10 +2,12 @@
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
+import { envVars } from "../../config";
 import AppError from "../../errorHelper/AppError";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { CookieHelper } from "../../utils/setCookie";
+import { UserToken } from "../../utils/userToken";
 import { AuthService } from "./auth.service";
 
 // Create User Controller
@@ -57,30 +59,20 @@ const getNewAccessToken = catchAsync(
   }
 );
 
-// const logout = catchAsync( async (req: Request, res: Response, _next: NextFunction) => {
+const googleCallbackController = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+   const user = req.user;
+   if(!user){
+    throw new AppError("User not found", 404)
+   }
+   const tokenInfo = await UserToken.createUserToken(user)
+   CookieHelper.setAuthCookie(res, tokenInfo)
    
-//    res.clearCookie("accessToken", {
-//     httpOnly: true,
-//      secure: false,
-//      sameSite: "lax",
-//    });
 
-//      res.clearCookie("refreshToken", {
-//     httpOnly: true,
-//      secure: false,
-//      sameSite: "lax",
-//    });
+  res.redirect(envVars.FRONTEN_URL)
+  }
+);
 
-//     sendResponse(res, {
-//       success: true,
-//       statusCode: 200,
-//       message: "User logged in successfully",
-//       data: null,
-//     });
-//   }
-// );
-//h
-// controllers/authController.ts
 
 
 export const logout = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
@@ -119,5 +111,5 @@ export const AuthController = {
   getNewAccessToken,
   logout,
   resetPassword,
-
+googleCallbackController
 };

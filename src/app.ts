@@ -4,6 +4,8 @@ import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import exressSession from 'express-session';
+import passport from "passport";
+import "./config/passport";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import notFound from "./middleware/notFound";
 import { router } from "./routes";
@@ -15,7 +17,13 @@ app.use(exressSession({
   resave: false,
   saveUninitialized: false
 }))
-
+app.use(exressSession({
+  secret: process.env.XPRESS_SESSION_SECRET || "secret",
+ resave: false,
+ saveUninitialized:false
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(express.json());
 app.use(cookieParser())
 app.use(cors({
