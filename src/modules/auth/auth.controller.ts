@@ -57,24 +57,48 @@ const getNewAccessToken = catchAsync(
   }
 );
 
-const logout = catchAsync( async (req: Request, res: Response, _next: NextFunction) => {
+// const logout = catchAsync( async (req: Request, res: Response, _next: NextFunction) => {
+   
+//    res.clearCookie("accessToken", {
+//     httpOnly: true,
+//      secure: false,
+//      sameSite: "lax",
+//    });
+
+//      res.clearCookie("refreshToken", {
+//     httpOnly: true,
+//      secure: false,
+//      sameSite: "lax",
+//    });
+
+//     sendResponse(res, {
+//       success: true,
+//       statusCode: 200,
+//       message: "User logged in successfully",
+//       data: null,
+//     });
+//   }
+// );
+
+
+const logout = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
    
    res.clearCookie("accessToken", {
     httpOnly: true,
-     secure: false,
-     sameSite: "lax",
+    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
    });
 
-     res.clearCookie("refreshToken", {
+   res.clearCookie("refreshToken", {
     httpOnly: true,
-     secure: false,
-     sameSite: "lax",
+    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
    });
 
     sendResponse(res, {
       success: true,
       statusCode: 200,
-      message: "User logged in successfully",
+      message: "User logged out successfully", // Fixed message
       data: null,
     });
   }
