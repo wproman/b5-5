@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(cors({
    origin: [
-    'https://b5-5.vercel.app',
+    'https://ride-app-gamma.vercel.app',
     'http://localhost:3000',
   ],
   credentials: true,
